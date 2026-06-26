@@ -4,96 +4,62 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>料金プラン - nukegake</title>
-  <meta name="description" content="nukegakeの料金プラン。無料・早期限定・月額・年額から選択できます。">
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    #checkout-msg {
-      background: #E8F5E9;
-      border: 1px solid #81C784;
-      border-radius: var(--radius);
-      padding: 12px 16px;
-      margin: 16px 0;
-      font-size: 14px;
-      display: none;
-    }
-    #checkout-msg.error { background: #FFEBEE; border-color: #EF9A9A; }
-    .pricing-login-note {
-      text-align: center;
-      font-size: 13px;
-      color: var(--muted);
-      padding: 12px 0 24px;
-    }
-    .pricing-login-note a { color: var(--primary); font-weight: 700; }
-    .faq { padding: 24px 0; }
-    .faq h2 { font-size: 20px; font-weight: 900; margin-bottom: 16px; }
-    .faq-item { border-top: 1px solid var(--border); padding: 16px 0; }
-    .faq-q { font-weight: 700; margin-bottom: 8px; }
-    .faq-a { font-size: 14px; color: var(--muted); line-height: 1.8; }
-  </style>
 </head>
 <body>
 
-<!-- ヘッダー -->
 <header class="header">
   <div class="header-inner">
     <a href="index.html" class="logo">nuke<span>gake</span></a>
     <nav class="header-nav">
-      <span id="user-info"></span>
-      <span id="plan-badge" class="plan-badge"></span>
       <a href="index.html" class="btn btn-sm btn-outline">企業一覧</a>
-      <button id="btn-login" class="btn btn-sm btn-google" style="display:none">Googleでログイン</button>
-      <button id="btn-logout" class="btn btn-sm btn-outline" style="display:none">ログアウト</button>
     </nav>
   </div>
 </header>
 
-<!-- ヒーロー -->
 <section class="pricing-hero">
   <h1>料金プラン</h1>
-  <p>シンプルな料金体系。いつでもアップグレード・解約できます。</p>
+  <p>シンプルな料金。いつでも解約できます。</p>
 </section>
 
 <main class="container">
-  <div id="checkout-msg"></div>
 
-  <p class="pricing-login-note" id="login-note" style="display:none">
-    プランを購入するには<a href="login.html">Googleログイン</a>が必要です。
-  </p>
+  <!-- 決済成功メッセージ -->
+  <div id="success-msg" style="display:none;background:#E8F5E9;border:1px solid #81C784;border-radius:8px;padding:16px;margin:16px 0;font-size:14px;">
+    ✅ お支払いが完了しました！これですべての企業情報を閲覧できます。
+    <a href="index.html" style="font-weight:700;color:#1B5E20;">企業一覧へ →</a>
+  </div>
 
   <div class="pricing-grid">
 
-    <!-- 無料プラン -->
+    <!-- 無料 -->
     <div class="pricing-card">
       <p class="pricing-plan-name">無料プラン</p>
       <p class="pricing-price">¥0</p>
       <p class="pricing-period">ずっと無料</p>
       <ul class="pricing-features">
-        <li>月10件まで閲覧</li>
+        <li>10件まで閲覧</li>
         <li class="no">広告あり</li>
         <li class="no">ページ送り不可</li>
-        <li class="no">電話番号非表示</li>
       </ul>
-      <a href="index.html" class="btn btn-outline" style="width:100%">無料で使う</a>
+      <a href="index.html" class="btn btn-outline" style="width:100%;display:block;text-align:center">無料で使う</a>
     </div>
 
-    <!-- 早期限定プラン -->
+    <!-- 早期限定 -->
     <div class="pricing-card featured">
       <span class="pricing-badge">先着50名限定</span>
       <p class="pricing-plan-name">早期限定プラン</p>
       <p class="pricing-price">¥500<sub>/月</sub></p>
-      <p class="pricing-period" id="early-remaining">残り定員確認中...</p>
+      <p class="pricing-period">今だけの特別価格</p>
       <ul class="pricing-features">
         <li>無制限閲覧</li>
         <li>広告なし</li>
         <li>電話番号表示</li>
-        <li>全エリア対応</li>
       </ul>
-      <button class="btn btn-primary" style="width:100%" data-plan="early" onclick="startCheckout(this)">
-        早期限定で始める
-      </button>
+      <button class="btn btn-primary" style="width:100%" onclick="goToStripe('early')">早期限定で始める</button>
     </div>
 
-    <!-- 月額プラン -->
+    <!-- 月額 -->
     <div class="pricing-card">
       <p class="pricing-plan-name">月額プラン</p>
       <p class="pricing-price">¥980<sub>/月</sub></p>
@@ -102,14 +68,11 @@
         <li>無制限閲覧</li>
         <li>広告なし</li>
         <li>電話番号表示</li>
-        <li>全エリア対応</li>
       </ul>
-      <button class="btn btn-primary" style="width:100%" data-plan="monthly" onclick="startCheckout(this)">
-        月額で始める
-      </button>
+      <button class="btn btn-primary" style="width:100%" onclick="goToStripe('monthly')">月額で始める</button>
     </div>
 
-    <!-- 年額プラン -->
+    <!-- 年額 -->
     <div class="pricing-card">
       <p class="pricing-plan-name">年額プラン</p>
       <p class="pricing-price">¥9,800<sub>/年</sub></p>
@@ -118,128 +81,66 @@
         <li>無制限閲覧</li>
         <li>広告なし</li>
         <li>電話番号表示</li>
-        <li>全エリア対応</li>
       </ul>
-      <button class="btn btn-primary" style="width:100%" data-plan="yearly" onclick="startCheckout(this)">
-        年額で始める
-      </button>
+      <button class="btn btn-primary" style="width:100%" onclick="goToStripe('yearly')">年額で始める</button>
     </div>
 
   </div>
 
-  <!-- FAQ -->
   <section class="faq">
     <h2>よくある質問</h2>
     <div class="faq-item">
-      <p class="faq-q">Q. 途中でプランを変更できますか？</p>
-      <p class="faq-a">はい。プランはいつでも変更できます。アップグレード・ダウングレードともに可能です。</p>
+      <p class="faq-q">Q. 解約できますか？</p>
+      <p class="faq-a">はい。Stripeのカスタマーポータルからいつでも解約できます。解約後は無料プランになります。</p>
     </div>
     <div class="faq-item">
-      <p class="faq-q">Q. 解約はどうすればできますか？</p>
-      <p class="faq-a">マイページから月末に解約手続きができます。解約後は無料プランになります。日割り計算・返金はございません。</p>
+      <p class="faq-q">Q. 対象エリアは？</p>
+      <p class="faq-a">現在は大阪府堺市（7区）のデータを提供しています。順次エリアを拡大予定です。</p>
     </div>
     <div class="faq-item">
-      <p class="faq-q">Q. 早期限定プランはいつまでですか？</p>
-      <p class="faq-a">先着50名に達した時点で終了します。お早めにお申し込みください。</p>
-    </div>
-    <div class="faq-item">
-      <p class="faq-q">Q. 対象エリアはどこですか？</p>
-      <p class="faq-a">現在は大阪府堺市（堺区・中区・東区・西区・南区・北区・美原区）のデータを提供しています。順次エリアを拡大予定です。</p>
-    </div>
-    <div class="faq-item">
-      <p class="faq-q">Q. データはどこから取得していますか？</p>
-      <p class="faq-a">国税庁の法人番号公表データをベースに、Google Maps APIで電話番号・業種情報を補完しています。</p>
+      <p class="faq-q">Q. データはどこから？</p>
+      <p class="faq-a">国税庁の法人番号公表データをベースにしています。</p>
     </div>
   </section>
+
 </main>
 
 <footer class="footer">
   <div class="footer-links">
     <a href="index.html">企業一覧</a>
     <a href="mailto:info@nukegake.jp">お問い合わせ</a>
-    <a href="#">特定商取引法に基づく表示</a>
-    <a href="#">プライバシーポリシー</a>
   </div>
   <p>&copy; 2024 nukegake</p>
 </footer>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="js/config.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/api.js"></script>
 <script>
-  let _checkoutUser = null;
-
-  initAuth(function(user) {
-    _checkoutUser = user;
-    const loginNote = document.getElementById('login-note');
-    const planBadge = document.getElementById('plan-badge');
-    const userInfo  = document.getElementById('user-info');
-    const btnLogin  = document.getElementById('btn-login');
-    const btnLogout = document.getElementById('btn-logout');
-
-    if (user) {
-      loginNote && (loginNote.style.display = 'none');
-      btnLogin  && (btnLogin.style.display = 'none');
-      btnLogout && (btnLogout.style.display = 'inline-block');
-      if (userInfo) userInfo.textContent = user.name || user.email;
-      if (planBadge) {
-        const labels = { free: '無料', early: '早期限定', monthly: '月額', yearly: '年額' };
-        planBadge.textContent = labels[user.plan] || '無料';
-        planBadge.className = 'plan-badge plan-' + (user.plan || 'free');
-      }
-    } else {
-      loginNote && (loginNote.style.display = 'block');
-      btnLogin  && (btnLogin.style.display = 'inline-block');
-      btnLogout && (btnLogout.style.display = 'none');
-    }
-
-    // Stripe決済成功後のURLパラメータ確認
-    const params = new URLSearchParams(location.search);
-    if (params.get('session_id')) {
-      showMsg('お支払いが完了しました。プランを有効化しています...', false);
-    }
-  });
-
-  document.getElementById('btn-login')?.addEventListener('click', signInWithGoogle);
-  document.getElementById('btn-logout')?.addEventListener('click', signOut);
-
-  async function startCheckout(btn) {
-    if (!_checkoutUser) {
-      window.location.href = 'login.html';
+  // Stripe Payment Linkに飛ぶ（決済後は ?paid=1 で戻ってくる）
+  function goToStripe(plan) {
+    const links = {
+      early:   CONFIG.STRIPE_LINK_EARLY,
+      monthly: CONFIG.STRIPE_LINK_MONTHLY,
+      yearly:  CONFIG.STRIPE_LINK_YEARLY,
+    };
+    const url = links[plan];
+    if (!url || url.includes('XXXXXXXXX')) {
+      alert('Stripeの設定がまだ完了していません。\ndocs/js/config.js の STRIPE_LINK_* を設定してください。');
       return;
     }
-
-    const plan = btn.dataset.plan;
-    btn.disabled = true;
-    btn.textContent = '処理中...';
-
-    try {
-      const res = await createCheckoutSession(plan);
-      if (res.url) {
-        window.location.href = res.url;
-      } else {
-        throw new Error('Checkout URLが取得できませんでした');
-      }
-    } catch (e) {
-      showMsg(e.message, true);
-      btn.disabled = false;
-      btn.textContent = getPlanLabel(plan);
-    }
+    // 決済後の戻り先URL（?paid=1 で有料判定）
+    const successUrl = encodeURIComponent(
+      location.origin + location.pathname.replace('pricing.html', '') + 'pricing.html?paid=1'
+    );
+    window.location.href = url + '?client_reference_id=' + Date.now() + '&redirect_url=' + successUrl;
   }
 
-  function showMsg(text, isError) {
-    const el = document.getElementById('checkout-msg');
-    el.textContent = text;
-    el.className = isError ? 'error' : '';
-    el.style.display = 'block';
-    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-
-  function getPlanLabel(plan) {
-    const m = { early: '早期限定で始める', monthly: '月額で始める', yearly: '年額で始める' };
-    return m[plan] || '始める';
+  // 決済成功後の処理
+  const params = new URLSearchParams(location.search);
+  if (params.get('paid') === '1') {
+    localStorage.setItem('nukegake_paid', '1');
+    history.replaceState({}, '', location.pathname);
+    document.getElementById('success-msg').style.display = 'block';
+    document.getElementById('success-msg').scrollIntoView({ behavior: 'smooth' });
   }
 </script>
 </body>

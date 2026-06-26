@@ -1,5 +1,5 @@
 // ============================================================
-// メインアプリケーションロジック（STEP3）
+// メインアプリ（バックエンド不要・JSONから直接読み込む）
 // ============================================================
 
 const state = {
@@ -7,38 +7,97 @@ const state = {
   city:       '',
   industry:   '',
   page:       1,
-  loading:    false,
+  allData:    null,  // companies.json のキャッシュ
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-  initAuth(onUserChange);
-  loadFilters();
-  loadCompanies();
-  setupEventListeners();
+document.addEventListener('DOMContentLoaded', async () => {
+  // Stripe決済後のリダイレクト確認
+  handlePaymentReturn();
+
+  await loadData();
+  renderFilters();
+  renderCompanies();
+  setupEvents();
 });
 
-function setupEventListeners() {
-  document.getElementById('btn-login')?.addEventListener('click', signInWithGoogle);
-  document.getElementById('btn-logout')?.addEventListener('click', signOut);
+// ============================================================
+// データ読み込み
+// ============================================================
+async function loadData() {
+  if (state.allData) return;
+  try {
+    const res = await fetch(CONFIG.DATA_URL);
+    state.allData = await res.json();
+  } catch (e) {
+    console.error('データ読み込み失敗:', e);
+    state.allData = { meta: { prefectures: [], cities: [], industries: [] }, companies: [] };
+  }
+}
 
-  document.getElementById('filter-prefecture')?.addEventListener('change', async (e) => {
+// ============================================================
+// フィルター描画
+// ============================================================
+function renderFilters() {
+  const { prefectures, cities, industries } = state.allData.meta;
+
+  const prefSel = document.getElementById('filter-prefecture');
+  if (prefSel) {
+    prefectures.forEach(p => {
+      prefSel.appendChild(makeOption(p.code, p.name));
+    });
+  }
+
+  const indSel = document.getElementById('filter-industry');
+  if (indSel) {
+    industries.forEach(i => {
+      indSel.appendChild(makeOption(i.code, i.name));
+    });
+  }
+
+  updateCityFilter();
+}
+
+function updateCityFilter() {
+  const citySel = document.getElementById('filter-city');
+  if (!citySel) return;
+  citySel.innerHTML = '<option value="">市区町村を選択</option>';
+
+  const cities = state.allData.meta.cities.filter(
+    c => !state.prefecture || c.prefCode === state.prefecture
+  );
+  cities.forEach(c => citySel.appendChild(makeOption(c.code, c.name)));
+}
+
+function makeOption(value, text) {
+  const opt = document.createElement('option');
+  opt.value = value;
+  opt.textContent = text;
+  return opt;
+}
+
+// ============================================================
+// イベント設定
+// ============================================================
+function setupEvents() {
+  document.getElementById('filter-prefecture')?.addEventListener('change', e => {
     state.prefecture = e.target.value;
     state.city = '';
     state.page = 1;
-    await updateCityFilter();
-    loadCompanies();
+    document.getElementById('filter-city').value = '';
+    updateCityFilter();
+    renderCompanies();
   });
 
-  document.getElementById('filter-city')?.addEventListener('change', (e) => {
+  document.getElementById('filter-city')?.addEventListener('change', e => {
     state.city = e.target.value;
     state.page = 1;
-    loadCompanies();
+    renderCompanies();
   });
 
-  document.getElementById('filter-industry')?.addEventListener('change', (e) => {
+  document.getElementById('filter-industry')?.addEventListener('change', e => {
     state.industry = e.target.value;
     state.page = 1;
-    loadCompanies();
+    renderCompanies();
   });
 
   document.getElementById('btn-reset')?.addEventListener('click', () => {
@@ -49,200 +108,140 @@ function setupEventListeners() {
     document.getElementById('filter-prefecture').value = '';
     document.getElementById('filter-city').value = '';
     document.getElementById('filter-industry').value = '';
-    loadCompanies();
+    updateCityFilter();
+    renderCompanies();
   });
 }
 
-function onUserChange(user) {
-  const loginBtn  = document.getElementById('btn-login');
-  const logoutBtn = document.getElementById('btn-logout');
-  const userInfo  = document.getElementById('user-info');
-  const planBadge = document.getElementById('plan-badge');
-
-  if (user) {
-    loginBtn  && (loginBtn.style.display = 'none');
-    logoutBtn && (logoutBtn.style.display = 'inline-block');
-    if (userInfo) userInfo.textContent = user.name || user.email;
-    if (planBadge) {
-      const labels = { free: '無料', early: '早期限定', monthly: '月額', yearly: '年額' };
-      planBadge.textContent = labels[user.plan] || '無料';
-      planBadge.className = 'plan-badge plan-' + (user.plan || 'free');
-    }
-  } else {
-    loginBtn  && (loginBtn.style.display = 'inline-block');
-    logoutBtn && (logoutBtn.style.display = 'none');
-    if (userInfo) userInfo.textContent = '';
-    if (planBadge) {
-      planBadge.textContent = '';
-      planBadge.className = 'plan-badge';
-    }
-  }
-
-  // ユーザー変更でリロード（表示件数が変わる場合があるため）
-  loadCompanies();
-}
-
-async function loadFilters() {
-  try {
-    const [prefRes, indRes] = await Promise.all([fetchPrefectures(), fetchIndustries()]);
-
-    const prefSelect = document.getElementById('filter-prefecture');
-    if (prefSelect) {
-      prefRes.prefectures.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p.code;
-        opt.textContent = p.name;
-        prefSelect.appendChild(opt);
-      });
-    }
-
-    const indSelect = document.getElementById('filter-industry');
-    if (indSelect) {
-      indRes.industries.forEach(i => {
-        const opt = document.createElement('option');
-        opt.value = i.code;
-        opt.textContent = i.name;
-        indSelect.appendChild(opt);
-      });
-    }
-  } catch (e) {
-    console.error('フィルター読み込みエラー:', e);
-  }
-}
-
-async function updateCityFilter() {
-  const citySelect = document.getElementById('filter-city');
-  if (!citySelect) return;
-  citySelect.innerHTML = '<option value="">市区町村を選択</option>';
-
-  try {
-    const res = await fetchCities(state.prefecture);
-    res.cities.forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c.code;
-      opt.textContent = c.name;
-      citySelect.appendChild(opt);
-    });
-  } catch (e) {
-    console.error('市区町村取得エラー:', e);
-  }
-}
-
-async function loadCompanies() {
-  if (state.loading) return;
-  state.loading = true;
-
+// ============================================================
+// 企業一覧描画
+// ============================================================
+function renderCompanies() {
+  const paid = isPaid();
   const list    = document.getElementById('company-list');
   const counter = document.getElementById('result-count');
   const pager   = document.getElementById('pagination');
   const freeMsg = document.getElementById('free-limit-msg');
+  const adArea  = document.getElementById('ad-area');
 
-  if (list) list.innerHTML = '<div class="loading">読み込み中...</div>';
-  if (freeMsg) freeMsg.style.display = 'none';
+  if (!list || !state.allData) return;
 
-  try {
-    const res = await fetchCompanies({
-      prefecture: state.prefecture,
-      city:       state.city,
-      industry:   state.industry,
-      page:       state.page,
-    });
+  // フィルタリング
+  const filtered = state.allData.companies.filter(c => {
+    if (state.prefecture && c.prefCode !== state.prefecture) return false;
+    if (state.city       && c.cityCode  !== state.city)      return false;
+    if (state.industry   && c.industryCode !== state.industry) return false;
+    return true;
+  });
 
-    if (counter) {
-      counter.textContent = res.isPaid
-        ? `${res.total.toLocaleString()}件`
-        : `${Math.min(res.total, 10)}件（全${res.total.toLocaleString()}件中）`;
-    }
+  const total = filtered.length;
 
-    if (list) {
-      if (res.companies.length === 0) {
-        list.innerHTML = '<p class="no-results">該当する企業が見つかりませんでした</p>';
-      } else {
-        list.innerHTML = res.companies.map(renderCompanyCard).join('');
-      }
-    }
+  // 無料は10件まで
+  const displayable = paid ? filtered : filtered.slice(0, CONFIG.FREE_LIMIT);
+  const totalPages  = Math.ceil(displayable.length / 10);
+  const start       = (state.page - 1) * 10;
+  const paged       = displayable.slice(start, start + 10);
 
-    renderPagination(pager, res);
-
-    if (res.freeLimitReached && freeMsg) {
-      freeMsg.style.display = 'block';
-    }
-  } catch (e) {
-    console.error('企業一覧取得エラー:', e);
-    if (list) list.innerHTML = '<p class="error">データの取得に失敗しました。時間をおいて再試行してください。</p>';
-  } finally {
-    state.loading = false;
+  // 件数表示
+  if (counter) {
+    counter.innerHTML = paid
+      ? `<strong>${total.toLocaleString()}</strong> 件`
+      : `<strong>${Math.min(total, CONFIG.FREE_LIMIT)}</strong> 件（全${total.toLocaleString()}件中）`;
   }
+
+  // 広告（有料ユーザーは非表示）
+  if (adArea) adArea.style.display = paid ? 'none' : 'block';
+
+  // 無料制限メッセージ
+  if (freeMsg) {
+    freeMsg.style.display = (!paid && total > CONFIG.FREE_LIMIT) ? 'block' : 'none';
+  }
+
+  // 一覧
+  if (paged.length === 0) {
+    list.innerHTML = '<p class="no-results">該当する企業が見つかりませんでした</p>';
+  } else {
+    list.innerHTML = paged.map(renderCard).join('');
+  }
+
+  // ページネーション
+  renderPagination(pager, state.page, totalPages);
 }
 
-function renderCompanyCard(company) {
-  const phone = company.phone
-    ? `<a href="tel:${company.phone}" class="company-phone">${company.phone}</a>`
+function renderCard(c) {
+  const phone = c.phone
+    ? `<a href="tel:${c.phone}" class="company-phone">${esc(c.phone)}</a>`
     : '<span class="no-data">電話番号なし</span>';
 
-  const industry = company.industryName
-    ? `<span class="industry-tag">${company.industryName}</span>`
-    : '';
-
-  const url = company.url
-    ? `<a href="${company.url}" target="_blank" rel="noopener" class="company-url">Webサイト</a>`
+  const tag = c.industryName
+    ? `<span class="industry-tag">${esc(c.industryName)}</span>`
     : '';
 
   return `
     <div class="company-card">
       <div class="company-header">
-        <h3 class="company-name">${escHtml(company.name)}</h3>
-        ${industry}
+        <h3 class="company-name">${esc(c.name)}</h3>
+        ${tag}
       </div>
-      <p class="company-furigana">${escHtml(company.furigana)}</p>
-      <p class="company-address">
-        <span class="icon">📍</span>
-        ${escHtml(company.prefecture)}${escHtml(company.city)}${escHtml(company.address)}
-      </p>
+      <p class="company-furigana">${esc(c.furigana)}</p>
+      <p class="company-address">📍 ${esc(c.prefecture)}${esc(c.city)}${esc(c.address)}</p>
       <div class="company-footer">
         ${phone}
-        ${url}
-        <span class="company-kind">${escHtml(company.kind)}</span>
+        <span class="company-kind">${esc(c.kind)}</span>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
-function renderPagination(container, res) {
+function renderPagination(container, page, totalPages) {
   if (!container) return;
   container.innerHTML = '';
-  if (res.totalPages <= 1) return;
+  if (totalPages <= 1) return;
 
-  const createBtn = (label, page, disabled = false) => {
+  const add = (label, p, disabled) => {
     const btn = document.createElement('button');
     btn.textContent = label;
     btn.disabled = disabled;
-    btn.className = 'page-btn' + (page === res.page ? ' active' : '');
+    btn.className = 'page-btn' + (p === page ? ' active' : '');
     btn.addEventListener('click', () => {
-      state.page = page;
-      loadCompanies();
+      state.page = p;
+      renderCompanies();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
-    return btn;
+    container.appendChild(btn);
   };
 
-  container.appendChild(createBtn('前へ', res.page - 1, res.page === 1));
-
-  // 最大5ページ分のボタンを表示
-  const start = Math.max(1, res.page - 2);
-  const end   = Math.min(res.totalPages, start + 4);
-  for (let p = start; p <= end; p++) {
-    container.appendChild(createBtn(String(p), p));
-  }
-
-  container.appendChild(createBtn('次へ', res.page + 1, res.page === res.totalPages));
+  add('前へ', page - 1, page === 1);
+  const s = Math.max(1, page - 2);
+  const e = Math.min(totalPages, s + 4);
+  for (let p = s; p <= e; p++) add(String(p), p, false);
+  add('次へ', page + 1, page === totalPages);
 }
 
-function escHtml(str) {
+// ============================================================
+// 有料判定（Stripe Payment後にlocalStorageに保存）
+// ============================================================
+function isPaid() {
+  return localStorage.getItem('nukegake_paid') === '1';
+}
+
+function handlePaymentReturn() {
+  const params = new URLSearchParams(location.search);
+  if (params.get('paid') === '1') {
+    localStorage.setItem('nukegake_paid', '1');
+    // URLからパラメータを消す
+    history.replaceState({}, '', location.pathname);
+    // 有料表示を更新
+    const badge = document.getElementById('plan-badge');
+    if (badge) { badge.textContent = '有料会員'; badge.className = 'plan-badge plan-monthly'; }
+  }
+}
+
+// ============================================================
+// ユーティリティ
+// ============================================================
+function esc(str) {
   if (!str) return '';
   return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }

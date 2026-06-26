@@ -1,26 +1,23 @@
 // ============================================================
 // 設定ファイル
-// GASをWebアプリとしてデプロイした後、
-// GAS_API_URLをデプロイURLに書き換えること
+// 【Stripeを契約したらここだけ書き換える】
+//
+// Stripe Payment Linkの作り方:
+// 1. https://dashboard.stripe.com に登録・ログイン
+// 2. 左メニュー「Payment Links」→「+ 新規作成」
+// 3. 商品を作成（例: nukegake月額 ¥980/月）
+// 4. 生成されたURLをここに貼り付け
 // ============================================================
 
 const CONFIG = {
-  // GAS WebアプリのURL（デプロイ後に更新）
-  GAS_API_URL: 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec',
+  // StripeのPayment Link URL（Stripeダッシュボードで取得）
+  STRIPE_LINK_EARLY:   'https://buy.stripe.com/XXXXXXXXX', // 早期限定 ¥500/月
+  STRIPE_LINK_MONTHLY: 'https://buy.stripe.com/XXXXXXXXX', // 月額 ¥980/月
+  STRIPE_LINK_YEARLY:  'https://buy.stripe.com/XXXXXXXXX', // 年額 ¥9800/年
 
-  // Firebase設定（Firebaseコンソールから取得）
-  FIREBASE: {
-    apiKey:            'YOUR_FIREBASE_API_KEY',
-    authDomain:        'nukegake.firebaseapp.com',
-    projectId:         'nukegake',
-    storageBucket:     'nukegake.appspot.com',
-    messagingSenderId: 'YOUR_SENDER_ID',
-    appId:             'YOUR_APP_ID',
-  },
+  // 企業データのパス（変更不要）
+  DATA_URL: 'data/companies.json',
 
-  // StripeのPublishableKey（Stripeダッシュボードから取得）
-  STRIPE_PUBLISHABLE_KEY: 'pk_live_YOUR_KEY',
-
-  // ページのベースURL
-  BASE_URL: 'https://myolyon.github.io/nukegake',
+  // 無料プランの閲覧上限
+  FREE_LIMIT: 10,
 };
