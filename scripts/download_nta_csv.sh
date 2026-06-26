@@ -6,19 +6,14 @@
 #   chmod +x scripts/download_nta_csv.sh
 #   ./scripts/download_nta_csv.sh
 #
-# 出力:
-#   scripts/sakai_filtered.csv  ← このファイルをGoogle Driveにアップロード
+# 出力: scripts/sakai_filtered.csv  → Google Driveにアップロード
 #
-# 必要なツール: curl, unzip, iconv (macOS/Linuxに標準搭載)
+# 注意: 国税庁サイトは自動アクセスを制限している場合があります。
+#       その場合は手動ダウンロード手順に従ってください。
 #
 # 堺市の市区町村コード（5桁）:
-#   27141 堺市堺区
-#   27142 堺市中区
-#   27143 堺市東区
-#   27144 堺市西区
-#   27145 堺市南区
-#   27146 堺市北区
-#   27147 堺市美原区
+#   27141 堺市堺区  27142 堺市中区  27143 堺市東区
+#   27144 堺市西区  27145 堺市南区  27146 堺市北区  27147 堺市美原区
 # ============================================================
 
 set -e
@@ -27,120 +22,149 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORK_DIR="$SCRIPT_DIR/tmp_nta"
 OUTPUT_FILE="$SCRIPT_DIR/sakai_filtered.csv"
 
-# 大阪府の都道府県コード
-PREF_CODE="27"
+# 大阪府の最新CSVのURLを試みる（URLは変更される場合あり）
+# 最新URLは https://www.houjin-bangou.nta.go.jp/download/zenken/ で確認
+NTA_DOWNLOAD_PAGE="https://www.houjin-bangou.nta.go.jp/download/zenken/index.html"
 
-# 堺市の市区町村コード（カンマ区切り）
-SAKAI_CODES="27141|27142|27143|27144|27145|27146|27147"
+CURL_OPTS=(
+  -L
+  --max-time 300
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+  -H "Accept-Language: ja,en;q=0.5"
+  -H "Accept-Encoding: gzip, deflate, br"
+  -H "DNT: 1"
+  -H "Connection: keep-alive"
+  --compressed
+)
 
-echo "=== 国税庁CSVダウンロード開始 ==="
+echo "=== 国税庁CSVダウンロード ==="
+echo ""
+
+# ダウンロードページにアクセスしてURLを取得
+echo "ダウンロードページを確認中..."
+PAGE_CONTENT=$(curl "${CURL_OPTS[@]}" -s "$NTA_DOWNLOAD_PAGE" 2>/dev/null || echo "")
+
+# 大阪府（コード27）のURLを正規表現で抽出
+OSAKA_URL=""
+if [ -n "$PAGE_CONTENT" ]; then
+  OSAKA_URL=$(echo "$PAGE_CONTENT" | grep -oE 'href="[^"]*27[^"]*\.(zip|ZIP)[^"]*"' | head -1 | sed 's/href="//;s/"//')
+  # 相対URLを絶対URLに変換
+  if [[ "$OSAKA_URL" == /* ]]; then
+    OSAKA_URL="https://www.houjin-bangou.nta.go.jp${OSAKA_URL}"
+  fi
+fi
+
+if [ -z "$OSAKA_URL" ]; then
+  echo ""
+  echo "⚠️  自動でダウンロードURLを取得できませんでした。"
+  echo ""
+  echo "【手動ダウンロード手順】"
+  echo "  1. 以下のURLをブラウザで開く:"
+  echo "     $NTA_DOWNLOAD_PAGE"
+  echo "  2. 「大阪府」のCSVをダウンロード（ZIP形式）"
+  echo "  3. ZIPを解凍してできたCSVファイルを以下に配置:"
+  echo "     $WORK_DIR/osaka.csv"
+  echo "  4. 以下のコマンドを実行してフィルタリング:"
+  echo "     $0 --filter-only"
+  echo ""
+  echo "【別の方法】"
+  echo "  国税庁APIを使う場合は以下を参考にしてください:"
+  echo "  https://www.houjin-bangou.nta.go.jp/webapi/"
+  echo ""
+
+  # サンプルデータを生成して続行するか確認
+  read -p "テスト用サンプルデータを生成しますか？ [y/N]: " USE_SAMPLE
+  if [[ "$USE_SAMPLE" =~ ^[Yy]$ ]]; then
+    "$SCRIPT_DIR/generate_sample_data.sh"
+    echo ""
+    echo "✅ サンプルデータで続行します。"
+    echo "   本番データは後で上書きできます。"
+  fi
+  exit 0
+fi
+
+# フィルタリングのみモード
+if [ "${1:-}" = "--filter-only" ]; then
+  CSV_FILE=$(find "$WORK_DIR" -name "*.csv" | head -1)
+  if [ -z "$CSV_FILE" ]; then
+    echo "エラー: $WORK_DIR にCSVファイルが見つかりません"
+    exit 1
+  fi
+  filter_csv "$CSV_FILE"
+  exit 0
+fi
+
+# ダウンロード実行
+echo "ダウンロード中: $OSAKA_URL"
 mkdir -p "$WORK_DIR"
-cd "$WORK_DIR"
+curl "${CURL_OPTS[@]}" -o "$WORK_DIR/osaka.zip" "$OSAKA_URL"
 
-# 国税庁から大阪府のCSV（ZIP）をダウンロード
-# ※ファイル名・URLは変更される場合があります
-# 最新のURLは https://www.houjin-bangou.nta.go.jp/download/zenken/ から確認してください
-NTA_URL="https://www.houjin-bangou.nta.go.jp/download/zenken/index.html"
-
-echo ""
-echo "【重要】国税庁のURLは定期的に変更されます。"
-echo "以下のサイトから最新のダウンロードURLを確認してください:"
-echo "  $NTA_URL"
-echo ""
-
-# 大阪府のCSV ZIPファイルを自動検索
-echo "大阪府のCSVを検索中..."
-DOWNLOAD_PAGE=$(curl -s "$NTA_URL" 2>/dev/null || echo "")
-
-# URLを手動で設定（自動取得できない場合）
-CSV_ZIP_URL=""
-
-if [ -z "$CSV_ZIP_URL" ]; then
-  echo ""
-  echo "CSVのZIPファイルURLを直接入力してください:"
-  echo "（例: https://www.houjin-bangou.nta.go.jp/download/zenken/...大阪...zip）"
-  read -p "URL: " CSV_ZIP_URL
-fi
-
-if [ -z "$CSV_ZIP_URL" ]; then
-  echo "URLが入力されませんでした。処理を中断します。"
-  echo ""
-  echo "別の方法:"
-  echo "1. ブラウザで $NTA_URL を開く"
-  echo "2. 大阪府のCSVをダウンロード"
-  echo "3. ZIPを解凍してCSVファイルを $WORK_DIR/ に配置"
-  echo "4. 以下のコマンドを手動実行:"
-  echo "   grep -E '^[^,]+,[^,]+,[^,]+,[^,]+,[^,]+,[^,]+,[^,]+,[^,]+,[^,]+,27,(${SAKAI_CODES//|/|}),.*,.*,.*,.*,.*,.*,.*,,,' osaka.csv > $OUTPUT_FILE"
-  exit 1
-fi
-
-echo "ダウンロード中: $CSV_ZIP_URL"
-curl -L -o osaka.zip "$CSV_ZIP_URL"
 echo "解凍中..."
+cd "$WORK_DIR"
 unzip -o osaka.zip
 
 # CSVファイルを探す
 CSV_FILE=$(find . -name "*.csv" | head -1)
 if [ -z "$CSV_FILE" ]; then
   echo "エラー: CSVファイルが見つかりません"
+  ls -la
   exit 1
 fi
 
 echo "CSVファイル: $CSV_FILE"
-
-# 文字コードを確認・変換（Shift-JISの場合はUTF-8に変換）
-FILE_ENCODING=$(file -b --mime-encoding "$CSV_FILE" 2>/dev/null || echo "unknown")
-echo "文字コード: $FILE_ENCODING"
-
-if echo "$FILE_ENCODING" | grep -qi "iso-2022\|shift\|sjis\|euc"; then
-  echo "UTF-8に変換中..."
-  iconv -f SHIFT-JIS -t UTF-8 "$CSV_FILE" > osaka_utf8.csv
-  CSV_FILE="osaka_utf8.csv"
-fi
-
-echo "堺市のデータを抽出中..."
-
-# CSVのフィルタリング
-# 列構成（0-indexed）:
-#  [1]  法人番号
-#  [9]  都道府県コード
-#  [10] 市区町村コード
-#  [24] 最新履歴 (1=最新)
-#  [20] 廃業等年月日 (空=現役)
-#  [26] 検索対象除外 (1=除外)
-
-# AWKで絞り込み（ヘッダー行 + 堺市の現役企業のみ）
-awk -F',' '
-  NR==1 { print; next }
-  {
-    corp_no = $2
-    pref    = $10
-    city    = $11
-    closed  = $21
-    latest  = $25
-    exclude = $27
-
-    # 最新履歴=1、廃業なし、除外なし、堺市
-    if (latest == "1" && closed == "" && exclude != "1" &&
-        (city == "27141" || city == "27142" || city == "27143" ||
-         city == "27144" || city == "27145" || city == "27146" || city == "27147")) {
-      print
-    }
-  }
-' "$CSV_FILE" > "$OUTPUT_FILE"
-
-COUNT=$(wc -l < "$OUTPUT_FILE")
-echo ""
-echo "=== 完了 ==="
-echo "抽出件数: $((COUNT - 1)) 件"
-echo "出力ファイル: $OUTPUT_FILE"
-echo ""
-echo "次のステップ:"
-echo "1. $OUTPUT_FILE をGoogle Driveにアップロード"
-echo "2. ファイルのIDをコピー（ドライブURL内の /d/XXXXXX/ 部分）"
-echo "3. GASのスクリプトプロパティ CSV_FILE_ID にセット"
-echo "4. GASで importNtaCsv() を実行"
+filter_csv "$CSV_FILE"
 
 # 一時ファイルを削除
 cd "$SCRIPT_DIR"
 rm -rf "$WORK_DIR"
+
+filter_csv() {
+  local INPUT="$1"
+
+  # 文字コード確認・変換
+  if command -v nkf &>/dev/null; then
+    echo "文字コード変換中 (nkf)..."
+    nkf -w "$INPUT" > /tmp/osaka_utf8.csv && mv /tmp/osaka_utf8.csv "$INPUT"
+  elif command -v iconv &>/dev/null; then
+    echo "文字コード変換中 (iconv)..."
+    iconv -f SHIFT-JIS -t UTF-8 "$INPUT" > /tmp/osaka_utf8.csv 2>/dev/null && mv /tmp/osaka_utf8.csv "$INPUT" || true
+  fi
+
+  echo "堺市のデータを抽出中..."
+
+  # AWKで絞り込み
+  # 列構成(1-indexed): [2]=法人番号, [7]=社名, [11]=都道府県コード
+  # [12]=市区町村コード, [21]=廃業年月日, [25]=最新履歴, [27]=検索除外
+  awk -F',' '
+    NR==1 { print; next }
+    {
+      city    = $11
+      closed  = $21
+      latest  = $25
+      exclude = $27
+
+      gsub(/\r/, "", latest)
+      gsub(/\r/, "", exclude)
+      gsub(/\r/, "", closed)
+      gsub(/\r/, "", city)
+
+      if (latest == "1" && closed == "" && exclude != "1" &&
+          (city == "27141" || city == "27142" || city == "27143" ||
+           city == "27144" || city == "27145" || city == "27146" || city == "27147")) {
+        print
+      }
+    }
+  ' "$INPUT" > "$OUTPUT_FILE"
+
+  COUNT=$(wc -l < "$OUTPUT_FILE")
+  echo ""
+  echo "=== 完了 ==="
+  echo "抽出件数: $((COUNT - 1)) 件"
+  echo "出力: $OUTPUT_FILE"
+  echo ""
+  echo "次のステップ:"
+  echo "  1. $OUTPUT_FILE をGoogle Driveにアップロード"
+  echo "  2. ファイルIDをGASスクリプトプロパティ CSV_FILE_ID に設定"
+  echo "  3. GASで importNtaCsv() を実行"
+}

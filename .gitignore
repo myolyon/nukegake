@@ -1,0 +1,7 @@
+scripts/tmp_nta/
+scripts/*.zip
+scripts/.env.stripe
+.env
+*.env.local
+node_modules/
+.DS_Store
