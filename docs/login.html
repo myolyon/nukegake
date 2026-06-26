@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ログイン - nukegake</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      background: var(--bg);
+    }
+    .login-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+    }
+    .login-logo { font-size: 28px; font-weight: 900; color: var(--primary); margin-bottom: 8px; }
+    .login-logo span { color: var(--text); }
+    .login-catch { font-size: 13px; color: var(--muted); margin-bottom: 32px; }
+    .login-btn-wrap { margin-bottom: 24px; }
+    .btn-google { width: 100%; justify-content: center; padding: 12px; font-size: 15px; }
+    .login-note { font-size: 12px; color: var(--muted); line-height: 1.8; }
+    .login-note a { color: var(--primary); }
+  </style>
+</head>
+<body>
+
+<div class="login-page">
+  <div class="login-card">
+    <p class="login-logo">nuke<span>gake</span></p>
+    <p class="login-catch">ビリだけは、嫌だ。</p>
+
+    <div id="login-content">
+      <div class="login-btn-wrap">
+        <button id="btn-login" class="btn btn-google">Googleアカウントでログイン</button>
+      </div>
+      <p class="login-note">
+        ログインすることで<a href="#">利用規約</a>および
+        <a href="#">プライバシーポリシー</a>に同意したものとみなします。
+      </p>
+    </div>
+
+    <div id="logged-in-content" style="display:none">
+      <p style="margin-bottom:16px">ログイン済みです</p>
+      <p id="user-email" style="font-weight:700;margin-bottom:24px"></p>
+      <a href="index.html" class="btn btn-primary" style="display:block;margin-bottom:12px">企業一覧へ</a>
+      <button id="btn-logout" class="btn btn-outline" style="width:100%">ログアウト</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/api.js"></script>
+<script>
+  initAuth(function(user) {
+    if (user) {
+      document.getElementById('login-content').style.display = 'none';
+      document.getElementById('logged-in-content').style.display = 'block';
+      document.getElementById('user-email').textContent = user.email;
+    } else {
+      document.getElementById('login-content').style.display = 'block';
+      document.getElementById('logged-in-content').style.display = 'none';
+    }
+  });
+
+  document.getElementById('btn-login')?.addEventListener('click', signInWithGoogle);
+  document.getElementById('btn-logout')?.addEventListener('click', signOut);
+</script>
+</body>
+</html>

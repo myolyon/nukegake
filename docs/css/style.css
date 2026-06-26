@@ -1,0 +1,423 @@
+/* ============================================================
+   nukegake - スマホファーストデザイン
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary:   #E84040;
+  --primary-d: #C02020;
+  --bg:        #F7F7F7;
+  --white:     #FFFFFF;
+  --text:      #222222;
+  --muted:     #777777;
+  --border:    #E0E0E0;
+  --radius:    8px;
+  --shadow:    0 2px 8px rgba(0,0,0,.08);
+}
+
+body {
+  font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ============================================================
+   ヘッダー
+   ============================================================ */
+.header {
+  background: var(--white);
+  border-bottom: 2px solid var(--primary);
+  padding: 0 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0,0,0,.06);
+}
+
+.header-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 56px;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--primary);
+  letter-spacing: -0.5px;
+  text-decoration: none;
+}
+
+.logo span { color: var(--text); }
+
+.header-nav { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+#user-info { font-size: 13px; color: var(--muted); max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ============================================================
+   ボタン
+   ============================================================ */
+.btn {
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  transition: background .15s, transform .1s;
+}
+.btn:active { transform: scale(.97); }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-d); }
+.btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+.btn-outline:hover { background: var(--primary); color: #fff; }
+.btn-sm { padding: 6px 12px; font-size: 13px; }
+.btn-google { background: #4285F4; color: #fff; display: flex; align-items: center; gap: 6px; }
+.btn-google::before { content: 'G'; font-weight: 900; }
+
+/* ============================================================
+   ヒーロー（index.htmlのみ）
+   ============================================================ */
+.hero {
+  background: linear-gradient(135deg, #222 0%, #444 100%);
+  color: #fff;
+  padding: 48px 16px;
+  text-align: center;
+}
+
+.hero-catch {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+.hero-catch em { color: var(--primary); font-style: normal; }
+
+.hero-sub { font-size: 14px; opacity: .8; margin-bottom: 24px; }
+
+.hero-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* ============================================================
+   コンテンツエリア
+   ============================================================ */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* ============================================================
+   フィルター
+   ============================================================ */
+.filter-bar {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.filter-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filter-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 140px; }
+.filter-group label { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  background: var(--white);
+  width: 100%;
+  appearance: auto;
+}
+
+select:focus { outline: 2px solid var(--primary); border-color: transparent; }
+
+/* ============================================================
+   結果ヘッダー
+   ============================================================ */
+.result-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0 4px;
+}
+
+.result-count { font-size: 14px; color: var(--muted); }
+.result-count strong { color: var(--text); font-size: 18px; }
+
+/* ============================================================
+   無料プラン制限メッセージ
+   ============================================================ */
+.free-limit-msg {
+  background: #FFF3E0;
+  border: 1px solid #FFB74D;
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-size: 14px;
+  display: none;
+}
+
+.free-limit-msg strong { color: #E65100; }
+.free-limit-msg a { color: var(--primary); font-weight: 700; }
+
+/* ============================================================
+   企業カード
+   ============================================================ */
+.company-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 24px;
+}
+
+.company-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  transition: box-shadow .15s;
+}
+
+.company-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+
+.company-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.company-name {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.company-furigana {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.company-address {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.company-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.company-phone {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.company-url { font-size: 13px; }
+.company-kind { font-size: 12px; color: var(--muted); margin-left: auto; }
+.no-data { font-size: 12px; color: var(--border); }
+
+.industry-tag {
+  background: #FEE8E8;
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   ローディング・エラー
+   ============================================================ */
+.loading, .no-results, .error {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--muted);
+}
+
+.error { color: #c62828; }
+
+/* ============================================================
+   ページネーション
+   ============================================================ */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 0 32px;
+  flex-wrap: wrap;
+}
+
+.page-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all .15s;
+}
+
+.page-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+.page-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.page-btn:disabled { opacity: .4; cursor: default; }
+
+/* ============================================================
+   プランバッジ
+   ============================================================ */
+.plan-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.plan-free    { background: #EEE; color: #555; }
+.plan-early   { background: #E8F5E9; color: #388E3C; }
+.plan-monthly { background: #E3F2FD; color: #1565C0; }
+.plan-yearly  { background: #F3E5F5; color: #7B1FA2; }
+
+/* ============================================================
+   料金ページ（pricing.html）
+   ============================================================ */
+.pricing-hero {
+  background: linear-gradient(135deg, #222 0%, #444 100%);
+  color: #fff;
+  padding: 40px 16px;
+  text-align: center;
+}
+
+.pricing-hero h1 { font-size: 24px; font-weight: 900; margin-bottom: 8px; }
+.pricing-hero p  { opacity: .8; font-size: 14px; }
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  padding: 24px 0;
+}
+
+.pricing-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  text-align: center;
+  position: relative;
+  border: 2px solid transparent;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+.pricing-card:hover { border-color: var(--primary); box-shadow: 0 4px 20px rgba(232,64,64,.15); }
+.pricing-card.featured { border-color: var(--primary); }
+
+.pricing-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.pricing-plan-name { font-size: 14px; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
+.pricing-price { font-size: 36px; font-weight: 900; color: var(--text); }
+.pricing-price sub { font-size: 14px; font-weight: 400; color: var(--muted); }
+.pricing-period { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+
+.pricing-features {
+  list-style: none;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.pricing-features li {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pricing-features li::before { content: '✓'; color: var(--primary); font-weight: 700; }
+.pricing-features li.no::before { content: '✗'; color: var(--border); }
+.pricing-features li.no { color: var(--muted); }
+
+/* ============================================================
+   フッター
+   ============================================================ */
+.footer {
+  background: #222;
+  color: #aaa;
+  text-align: center;
+  padding: 24px 16px;
+  font-size: 13px;
+}
+
+.footer a { color: #aaa; }
+.footer a:hover { color: #fff; }
+.footer-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }
+
+/* ============================================================
+   広告エリア（無料ユーザー向け）
+   ============================================================ */
+.ad-banner {
+  background: #f5f5f5;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 12px 0;
+}
+
+/* ============================================================
+   レスポンシブ（タブレット以上）
+   ============================================================ */
+@media (min-width: 600px) {
+  .hero-catch { font-size: 36px; }
+  .filter-row { flex-wrap: nowrap; }
+  .company-list { gap: 16px; }
+}
+
+@media (min-width: 960px) {
+  .header-inner { height: 64px; }
+  .logo { font-size: 24px; }
+}
