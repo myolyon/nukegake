@@ -58,15 +58,15 @@ CITY_CONFIGS: dict = {
 # ============================================================
 INDUSTRY_KEYWORDS: dict = {
     '製造業': [
-        '製作所', '製造', '工業', '工場', '鉄銖', '鉄工', '金属',
-        '機械', '精密', '電機', '電子', '部品', '鉄造', '鴬造', 'プレス',
+        '製作所', '製造', '工業', '工場', '鉄鋼', '鉄工', '金属',
+        '機械', '精密', '電機', '電子', '部品', '鋳造', 'プレス',
         '加工', '化学', '製品', '印刷', '食品', 'ゴム', 'プラスチック',
-        '繊維', '紡總', '合成', 'メーカー', '伸線', '钔造', '金型',
+        '繊維', '紡績', '合成', 'メーカー', '伸線', '金型', '鍛造',
     ],
     '建設業': [
         '建設', '建工', '工務店', '土木', '建築', '組', '建材',
         '住建', '住宅', 'ハウス', '内装', '塗装', '電気工事',
-        '設備工事', '管工事', '左官', '屋根', '湯谷', '外壁', '橋梁',
+        '設備工事', '管工事', '左官', '屋根', '外壁', '橋梁', '板金',
     ],
     '運送業': [
         '運送', '物流', '運輸', '配送', '配達', 'ロジスティクス',
@@ -104,14 +104,18 @@ def normalize_phone(raw: str) -> Optional[str]:
 
 # ============================================================
 # CSVカラム候補（異なるCSVソースに対応）
+# 注: 法人番号CSVの会社名カラムは「商号又は名称」
 # ============================================================
 COLUMN_ALIASES: dict = {
-    'name':    ['法人名', '会社名', 'name', '名称'],
+    'name':    ['商号又は名称', '法人名', '会社名', 'name', '名称'],
     'pref':    ['都道府県名', '都道府県', 'prefecture'],
     'city':    ['市区町村名', '市区町村', 'city'],
     'address': ['丁目番地等', '番地', '住所', 'address'],
     'tel':     ['電話番号', 'tel', 'phone', '電話'],
-    'closed':  ['閉鎖フラグ', 'closed'],
+    'closed_date': ['廃業等年月日'],
+    'closed_reason': ['廃業等事由'],
+    'process_type':  ['処理区分'],
+    'closed_flag':   ['閉鎖フラグ', 'closed'],
 }
 
 
@@ -121,6 +125,28 @@ def find_col(headers: list, key: str) -> Optional[str]:
         if alias in headers:
             return alias
     return None
+
+
+def is_closed(row: dict, headers: list) -> bool:
+    """
+    廃業・閉鎖法人の判定
+    法人番号CSV: 廃業等年月日が設定されているか、処理区分が12(廃業)
+    旧形式: 閉鎖フラグ=1
+    """
+    col_date   = find_col(headers, 'closed_date')
+    col_reason = find_col(headers, 'closed_reason')
+    col_proc   = find_col(headers, 'process_type')
+    col_flag   = find_col(headers, 'closed_flag')
+
+    if col_date and row.get(col_date, '').strip():
+        return True
+    if col_reason and row.get(col_reason, '').strip():
+        return True
+    if col_proc and row.get(col_proc, '').strip() == '12':
+        return True
+    if col_flag and row.get(col_flag, '0').strip() == '1':
+        return True
+    return False
 
 
 # ============================================================
@@ -151,7 +177,7 @@ def process_csv(input_path: str, city_id: str) -> list:
     companies = []
     seen = set()
     company_id = 1
-    skipped_city = skipped_industry = skipped_dup = skipped_empty = 0
+    skipped_city = skipped_industry = skipped_dup = skipped_empty = skipped_closed = 0
 
     with open(input_path, encoding=encoding, newline='') as f:
         reader = csv.DictReader(f)
@@ -162,15 +188,17 @@ def process_csv(input_path: str, city_id: str) -> list:
         col_city    = find_col(headers, 'city')
         col_address = find_col(headers, 'address')
         col_tel     = find_col(headers, 'tel')
-        col_closed  = find_col(headers, 'closed')
 
         if not col_name:
             print(f'ERROR: 会社名カラムが見つかりません。\nヘッダー: {headers}', file=sys.stderr)
             sys.exit(1)
 
+        print(f'カラムマッピング: 名称={col_name}, 都道府県={col_pref}, 市区町村={col_city}, 住所={col_address}, 電話={col_tel}')
+
         for row in reader:
-            # 閉鎖法人を除外
-            if col_closed and row.get(col_closed, '0').strip() == '1':
+            # 廃業・閉鎖法人を除外
+            if is_closed(row, headers):
+                skipped_closed += 1
                 continue
 
             # 名称の空データ除去
@@ -218,6 +246,7 @@ def process_csv(input_path: str, city_id: str) -> list:
             })
             company_id += 1
 
+    print(f'  廃業除外: {skipped_closed}')
     print(f'  都市除外: {skipped_city}')
     print(f'  業種除外: {skipped_industry}')
     print(f'  重複除外: {skipped_dup}')
@@ -244,6 +273,9 @@ def print_summary(companies: list) -> None:
         print(f'  {ind}: {by_industry[ind]} 件')
     tel_count = len(companies) - no_tel
     print(f'  電話番号あり: {tel_count} 件 / なし: {no_tel} 件')
+    print()
+    print('⚠️  法人番号CSVには電話番号が含まれていません。')
+    print('   電話番号は別途iタウンページ等のデータと突合が必要です。')
 
 
 def main() -> None:
