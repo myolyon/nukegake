@@ -159,30 +159,29 @@ function render() {
 
 function renderPagination(el, page, totalPages) {
   if (totalPages <= 1) { el.innerHTML = ''; return; }
-
   const prev = `<button class="page-btn" id="pg-prev" ${page === 1 ? 'disabled' : ''}>前へ</button>`;
-  const next = `<button class="page-btn" id="pg-next" ${page === totalPages ? 'disabled' : ''}>次へ</button>`;
   const info = `<span class="page-info">${page} / ${totalPages}</span>`;
+  const next = `<button class="page-btn" id="pg-next" ${page === totalPages ? 'disabled' : ''}>次へ</button>`;
   el.innerHTML = prev + info + next;
-
   el.querySelector('#pg-prev')?.addEventListener('click', () => {
-    currentPage--;
-    render();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    currentPage--; render(); window.scrollTo({ top: 0, behavior: 'smooth' });
   });
   el.querySelector('#pg-next')?.addEventListener('click', () => {
-    currentPage++;
-    render();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    currentPage++; render(); window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 }
 
 function createCardHtml(c) {
   const isFav = getFavorites().includes(c.id);
   const favStar = isFav ? '★' : '☆';
-  const telBtn = c.tel
-    ? `<a href="tel:${esc(c.tel)}" class="btn-tel" data-id="${c.id}" aria-label="電話する">📞</a>`
-    : `<span class="btn-tel no-tel" aria-label="電話番号なし">—</span>`;
+
+  let telBtn;
+  if (c.isTelAvailable !== false && c.tel) {
+    telBtn = `<a href="tel:${esc(c.tel)}" class="btn-tel" data-id="${c.id}" aria-label="電話する">📞</a>`;
+  } else {
+    telBtn = `<span class="no-tel-label">電話番号<br>未登録</span>`;
+  }
+
   return `
     <div class="company-card">
       <div class="card-info">
