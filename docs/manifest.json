@@ -1,0 +1,25 @@
+{
+  "name": "nuke_gake",
+  "short_name": "ぬけがけ",
+  "description": "地域の法人情報を手軽に検索。営業マンのためのツール。",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#D94035",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
