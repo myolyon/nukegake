@@ -3,10 +3,13 @@ const FAV_KEY = 'nukegake_favs';
 const RECENT_KEY = 'nukegake_recent';
 const RECENT_MAX = 20;
 const SEARCH_DELAY = 50;
+const PAGE_SIZE = 20;
 
 let allCompanies = [];
 let currentView = 'all';
 let searchQuery = '';
+let industryFilter = '';
+let currentPage = 1;
 let searchTimer = null;
 
 document.addEventListener('DOMContentLoaded', init);
@@ -14,6 +17,7 @@ document.addEventListener('DOMContentLoaded', init);
 async function init() {
   await loadData();
   setupSearch();
+  setupIndustryFilters();
   setupTabs();
   render();
   if ('serviceWorker' in navigator) {
@@ -40,6 +44,7 @@ function setupSearch() {
     clear.classList.toggle('visible', searchQuery.length > 0);
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => {
+      currentPage = 1;
       trackEvent('search', { query: searchQuery, view: currentView });
       render();
     }, SEARCH_DELAY);
@@ -49,8 +54,21 @@ function setupSearch() {
     input.value = '';
     searchQuery = '';
     clear.classList.remove('visible');
+    currentPage = 1;
     input.focus();
     render();
+  });
+}
+
+function setupIndustryFilters() {
+  document.querySelectorAll('.industry-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.industry-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      industryFilter = chip.dataset.industry;
+      currentPage = 1;
+      render();
+    });
   });
 }
 
@@ -60,6 +78,7 @@ function setupTabs() {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       currentView = tab.dataset.view;
+      currentPage = 1;
       render();
     });
   });
@@ -77,6 +96,10 @@ function getFilteredCompanies() {
     list = allCompanies;
   }
 
+  if (industryFilter) {
+    list = list.filter(c => c.industry === industryFilter);
+  }
+
   if (searchQuery.trim()) {
     const q = searchQuery.toLowerCase();
     list = list.filter(c =>
@@ -90,26 +113,34 @@ function getFilteredCompanies() {
 
 function render() {
   const results = document.getElementById('results');
+  const paginationEl = document.getElementById('pagination');
   const companies = getFilteredCompanies();
+  const total = companies.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
-  if (companies.length === 0) {
+  if (currentPage > totalPages) currentPage = totalPages;
+
+  if (total === 0) {
     const msg = currentView === 'favorites'
       ? '★ お気に入りはまだありません'
       : currentView === 'recent'
       ? '最近見た企業はありません'
       : '該当する企業が見つかりませんでした';
     results.innerHTML = `<p class="empty">${msg}</p>`;
+    paginationEl.innerHTML = '';
     return;
   }
 
-  const countHtml = `<p class="result-count">${companies.length.toLocaleString()} 件</p>`;
-  const cardsHtml = companies.map(createCardHtml).join('');
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const paged = companies.slice(start, start + PAGE_SIZE);
+
+  const countHtml = `<p class="result-count">${total.toLocaleString()} 件</p>`;
+  const cardsHtml = paged.map(createCardHtml).join('');
   results.innerHTML = countHtml + cardsHtml;
 
   results.querySelectorAll('.btn-fav').forEach(btn => {
     btn.addEventListener('click', () => {
-      const id = Number(btn.dataset.id);
-      toggleFavorite(id);
+      toggleFavorite(Number(btn.dataset.id));
       render();
     });
   });
@@ -122,18 +153,36 @@ function render() {
       trackEvent('tel_click', { company_name: company ? company.name : '', industry: company ? company.industry : '' });
     });
   });
+
+  renderPagination(paginationEl, currentPage, totalPages);
+}
+
+function renderPagination(el, page, totalPages) {
+  if (totalPages <= 1) { el.innerHTML = ''; return; }
+
+  const prev = `<button class="page-btn" id="pg-prev" ${page === 1 ? 'disabled' : ''}>前へ</button>`;
+  const next = `<button class="page-btn" id="pg-next" ${page === totalPages ? 'disabled' : ''}>次へ</button>`;
+  const info = `<span class="page-info">${page} / ${totalPages}</span>`;
+  el.innerHTML = prev + info + next;
+
+  el.querySelector('#pg-prev')?.addEventListener('click', () => {
+    currentPage--;
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  el.querySelector('#pg-next')?.addEventListener('click', () => {
+    currentPage++;
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 }
 
 function createCardHtml(c) {
-  const favs = getFavorites();
-  const isFav = favs.includes(c.id);
-  const favClass = isFav ? 'btn-fav active' : 'btn-fav';
+  const isFav = getFavorites().includes(c.id);
   const favStar = isFav ? '★' : '☆';
-
   const telBtn = c.tel
     ? `<a href="tel:${esc(c.tel)}" class="btn-tel" data-id="${c.id}" aria-label="電話する">📞</a>`
     : `<span class="btn-tel no-tel" aria-label="電話番号なし">—</span>`;
-
   return `
     <div class="company-card">
       <div class="card-info">
@@ -142,7 +191,7 @@ function createCardHtml(c) {
         <div class="card-address">📍 ${esc(c.address)}</div>
       </div>
       <div class="card-actions">
-        <button class="${favClass}" data-id="${c.id}" aria-label="お気に入り">${favStar}</button>
+        <button class="btn-fav${isFav ? ' active' : ''}" data-id="${c.id}" aria-label="お気に入り">${favStar}</button>
         ${telBtn}
       </div>
     </div>`;
@@ -155,12 +204,8 @@ function getFavorites() {
 function toggleFavorite(id) {
   const favs = getFavorites();
   const idx = favs.indexOf(id);
-  if (idx === -1) {
-    favs.push(id);
-    trackEvent('favorite_add', { company_id: id });
-  } else {
-    favs.splice(idx, 1);
-  }
+  if (idx === -1) { favs.push(id); trackEvent('favorite_add', { company_id: id }); }
+  else { favs.splice(idx, 1); }
   localStorage.setItem(FAV_KEY, JSON.stringify(favs));
 }
 
@@ -181,9 +226,5 @@ function trackEvent(name, params) {
 
 function esc(str) {
   if (!str) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
