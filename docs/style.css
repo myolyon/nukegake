@@ -1,0 +1,231 @@
+:root {
+  --bg: #FFFFFF;
+  --card-bg: #F8F9FA;
+  --text: #1F2937;
+  --muted: #6B7280;
+  --border: #E5E7EB;
+  --primary: #D94035;
+  --primary-d: #B52A20;
+  --radius: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 16px;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.logo {
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.5px;
+}
+
+/* Hero */
+.hero {
+  padding: 24px 0 20px;
+  text-align: center;
+}
+.hero-main {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.4;
+}
+.hero-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* Search */
+.search-area {
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  padding: 12px 0;
+  z-index: 100;
+  border-bottom: 1px solid var(--border);
+}
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0 12px;
+  transition: border-color 0.15s;
+}
+.search-box:focus-within {
+  border-color: var(--primary);
+  background: #fff;
+}
+.search-icon {
+  font-size: 16px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+.search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  color: var(--text);
+  padding: 12px 0;
+  outline: none;
+  width: 100%;
+}
+.search-input::placeholder { color: var(--muted); }
+.search-clear {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px;
+  display: none;
+  flex-shrink: 0;
+}
+.search-clear.visible { display: block; }
+
+/* Tabs */
+.view-tabs {
+  display: flex;
+  gap: 0;
+  margin-top: 10px;
+}
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  border-bottom: 2px solid var(--border);
+  padding: 8px 0;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  font-family: inherit;
+}
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+
+/* Results */
+.results {
+  padding: 12px 0 80px;
+}
+.result-count {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+/* Cards */
+.company-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.card-info { flex: 1; min-width: 0; }
+.card-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-industry {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.card-address {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.btn-tel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 50%;
+  text-decoration: none;
+  font-size: 20px;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.btn-tel:hover { background: var(--primary-d); }
+.btn-tel.no-tel {
+  background: var(--border);
+  color: var(--muted);
+  pointer-events: none;
+  font-size: 14px;
+}
+.btn-fav {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--border);
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+.btn-fav.active { color: var(--primary); }
+
+/* Empty / Loading */
+.loading, .empty {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  padding: 48px 0;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 20px 0;
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  margin-top: 16px;
+}
+.footer a { color: var(--muted); text-decoration: none; }
+.footer a:hover { color: var(--primary); }
+.footer-sep { margin: 0 4px; }

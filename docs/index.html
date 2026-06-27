@@ -2,114 +2,62 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>nukegake（ぬけがけ）- 同僚との差が、年収を変える。</title>
-  <meta name="description" content="社内ビリだけは、嫌だ。地域の法人情報を検索・閲覧できる営業マン向けサービス。大阪府堺市の企業リスト。">
-  <meta property="og:title" content="nukegake - 同僚との差が、年収を変える。">
-  <meta property="og:description" content="社内ビリだけは、嫌だ。地域の法人情報を一括検索。個人営業マンの武器。">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#D94035">
+  <title>nuke_gake — 同僚との差が、年収を変える。</title>
+  <meta name="description" content="地域の法人情報を手軽に検索。営業マンのためのツール。">
+  <meta property="og:title" content="nuke_gake — 同僚との差が、年収を変える。">
+  <meta property="og:description" content="だから、このサイトは誰にも教えるな。">
   <meta property="og:type" content="website">
-  <!-- Google AdSense -->
-  <!-- 審査通過後、以下のコメントを解除してパブリッシャーIDを設定してください -->
-  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/icon.svg">
+  <!-- GA4 (Measurement IDを設定してコメントアウトを外してください)
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+  -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="header">
-  <div class="header-inner">
-    <a href="index.html" class="logo">nuke<span>gake</span></a>
-    <nav class="header-nav">
-      <a href="contact.html" class="btn btn-sm btn-outline">お問い合わせ</a>
-    </nav>
-  </div>
+  <div class="logo">nuke_gake</div>
 </header>
 
-<section class="hero">
-  <p class="hero-catch">同僚との差が、<em>年収を変える。</em></p>
-  <p class="hero-sub">社内ビリだけは、嫌だ。</p>
-</section>
-
-<main class="container">
-
-  <div class="filter-bar">
-    <div class="filter-row">
-      <div class="filter-group">
-        <label for="filter-prefecture">都道府県</label>
-        <select id="filter-prefecture">
-          <option value="">すべての都道府県</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <label for="filter-city">市区町村</label>
-        <select id="filter-city">
-          <option value="">市区町村を選択</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <label for="filter-industry">業種</label>
-        <select id="filter-industry">
-          <option value="">すべての業種</option>
-        </select>
-      </div>
-      <button id="btn-reset" class="btn btn-sm btn-outline" style="align-self:flex-end">リセット</button>
-    </div>
-  </div>
-
-  <div class="result-header">
-    <p class="result-count" id="result-count">-</p>
-  </div>
-
-  <!-- AdSense 広告ユニット（リスト上部 Leaderboard 728x90） -->
-  <div class="ad-slot ad-leaderboard">
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-         data-ad-slot="XXXXXXXXXX"
-         data-ad-format="horizontal"
-         data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-  </div>
-
-  <div id="company-list" class="company-list">
-    <div class="loading">読み込み中...</div>
-  </div>
-
-  <div id="pagination" class="pagination"></div>
-
-  <!-- AdSense 広告ユニット（リスト下部 Leaderboard 728x90） -->
-  <div class="ad-slot ad-leaderboard">
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-         data-ad-slot="XXXXXXXXXX"
-         data-ad-format="horizontal"
-         data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-  </div>
-
-</main>
-
-<!-- AdSense 広告ユニット（フッター上部 Leaderboard 728x90） -->
-<div class="ad-slot ad-leaderboard ad-before-footer">
-  <ins class="adsbygoogle"
-       style="display:block"
-       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-       data-ad-slot="XXXXXXXXXX"
-       data-ad-format="horizontal"
-       data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+<div class="hero">
+  <p class="hero-main">同僚との差が、年収を変える。</p>
+  <p class="hero-sub">だから、このサイトは誰にも教えるな。</p>
 </div>
 
-<footer class="footer">
-  <div class="footer-links">
-    <a href="contact.html">お問い合わせ</a>
-    <a href="tokushoho.html">特定商取引法に基づく表示</a>
-    <a href="privacy.html">プライバシーポリシー</a>
+<div class="search-area">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="search" id="search-input" class="search-input" placeholder="会社名・業種で検索" autocomplete="off">
+    <button class="search-clear" id="search-clear" aria-label="クリア">✕</button>
   </div>
-  <p>&copy; 2024 nuke_gake</p>
+  <div class="view-tabs">
+    <button class="tab active" data-view="all">すべて</button>
+    <button class="tab" data-view="favorites">★ お気に入り</button>
+    <button class="tab" data-view="recent">最近見た</button>
+  </div>
+</div>
+
+<main class="results" id="results">
+  <div class="loading">読み込み中...</div>
+</main>
+
+<footer class="footer">
+  <a href="privacy.html">プライバシーポリシー</a>
+  <span class="footer-sep">・</span>
+  <a href="tokushoho.html">特定商取引法</a>
+  <span class="footer-sep">・</span>
+  <a href="contact.html">お問い合わせ</a>
 </footer>
 
-<script src="js/config.js"></script>
-<script src="js/app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
