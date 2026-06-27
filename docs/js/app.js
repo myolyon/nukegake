@@ -7,13 +7,10 @@ const state = {
   city:       '',
   industry:   '',
   page:       1,
-  allData:    null,  // companies.json のキャッシュ
+  allData:    null,
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Stripe決済後のリダイレクト確認
-  handlePaymentReturn();
-
   await loadData();
   renderFilters();
   renderCompanies();
@@ -42,16 +39,12 @@ function renderFilters() {
 
   const prefSel = document.getElementById('filter-prefecture');
   if (prefSel) {
-    prefectures.forEach(p => {
-      prefSel.appendChild(makeOption(p.code, p.name));
-    });
+    prefectures.forEach(p => prefSel.appendChild(makeOption(p.code, p.name)));
   }
 
   const indSel = document.getElementById('filter-industry');
   if (indSel) {
-    industries.forEach(i => {
-      indSel.appendChild(makeOption(i.code, i.name));
-    });
+    industries.forEach(i => indSel.appendChild(makeOption(i.code, i.name)));
   }
 
   updateCityFilter();
@@ -117,54 +110,54 @@ function setupEvents() {
 // 企業一覧描画
 // ============================================================
 function renderCompanies() {
-  const paid = isPaid();
   const list    = document.getElementById('company-list');
   const counter = document.getElementById('result-count');
   const pager   = document.getElementById('pagination');
-  const freeMsg = document.getElementById('free-limit-msg');
-  const adArea  = document.getElementById('ad-area');
 
   if (!list || !state.allData) return;
 
-  // フィルタリング
   const filtered = state.allData.companies.filter(c => {
-    if (state.prefecture && c.prefCode !== state.prefecture) return false;
-    if (state.city       && c.cityCode  !== state.city)      return false;
-    if (state.industry   && c.industryCode !== state.industry) return false;
+    if (state.prefecture && c.prefCode     !== state.prefecture) return false;
+    if (state.city       && c.cityCode     !== state.city)       return false;
+    if (state.industry   && c.industryCode !== state.industry)   return false;
     return true;
   });
 
-  const total = filtered.length;
+  const total      = filtered.length;
+  const totalPages = Math.ceil(total / CONFIG.PER_PAGE);
+  const start      = (state.page - 1) * CONFIG.PER_PAGE;
+  const paged      = filtered.slice(start, start + CONFIG.PER_PAGE);
 
-  // 無料は10件まで
-  const displayable = paid ? filtered : filtered.slice(0, CONFIG.FREE_LIMIT);
-  const totalPages  = Math.ceil(displayable.length / 10);
-  const start       = (state.page - 1) * 10;
-  const paged       = displayable.slice(start, start + 10);
-
-  // 件数表示
   if (counter) {
-    counter.innerHTML = paid
-      ? `<strong>${total.toLocaleString()}</strong> 件`
-      : `<strong>${Math.min(total, CONFIG.FREE_LIMIT)}</strong> 件（全${total.toLocaleString()}件中）`;
+    counter.innerHTML = `<strong>${total.toLocaleString()}</strong> 件`;
   }
 
-  // 広告（有料ユーザーは非表示）
-  if (adArea) adArea.style.display = paid ? 'none' : 'block';
-
-  // 無料制限メッセージ
-  if (freeMsg) {
-    freeMsg.style.display = (!paid && total > CONFIG.FREE_LIMIT) ? 'block' : 'none';
-  }
-
-  // 一覧
   if (paged.length === 0) {
     list.innerHTML = '<p class="no-results">該当する企業が見つかりませんでした</p>';
   } else {
-    list.innerHTML = paged.map(renderCard).join('');
+    const parts = [];
+    paged.forEach((c, i) => {
+      parts.push(renderCard(c));
+      // 5件ごとに矩形広告を挿入（最後の企業の後は除く）
+      if ((i + 1) % 5 === 0 && i + 1 < paged.length) {
+        parts.push(`
+          <div class="ad-slot ad-rectangle">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="XXXXXXXXXX"
+                 data-ad-format="rectangle"
+                 data-full-width-responsive="false"></ins>
+          </div>`);
+      }
+    });
+    list.innerHTML = parts.join('');
+    // AdSense初期化（動的挿入後）
+    list.querySelectorAll('.adsbygoogle').forEach(() => {
+      try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+    });
   }
 
-  // ページネーション
   renderPagination(pager, state.page, totalPages);
 }
 
@@ -215,25 +208,6 @@ function renderPagination(container, page, totalPages) {
   const e = Math.min(totalPages, s + 4);
   for (let p = s; p <= e; p++) add(String(p), p, false);
   add('次へ', page + 1, page === totalPages);
-}
-
-// ============================================================
-// 有料判定（Stripe Payment後にlocalStorageに保存）
-// ============================================================
-function isPaid() {
-  return localStorage.getItem('nukegake_paid') === '1';
-}
-
-function handlePaymentReturn() {
-  const params = new URLSearchParams(location.search);
-  if (params.get('paid') === '1') {
-    localStorage.setItem('nukegake_paid', '1');
-    // URLからパラメータを消す
-    history.replaceState({}, '', location.pathname);
-    // 有料表示を更新
-    const badge = document.getElementById('plan-badge');
-    if (badge) { badge.textContent = '有料会員'; badge.className = 'plan-badge plan-monthly'; }
-  }
 }
 
 // ============================================================

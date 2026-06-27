@@ -61,8 +61,6 @@ a:hover { text-decoration: underline; }
 
 .header-nav { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 
-#user-info { font-size: 13px; color: var(--muted); max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
 /* ============================================================
    ボタン
    ============================================================ */
@@ -82,11 +80,9 @@ a:hover { text-decoration: underline; }
 .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
 .btn-outline:hover { background: var(--primary); color: #fff; }
 .btn-sm { padding: 6px 12px; font-size: 13px; }
-.btn-google { background: #4285F4; color: #fff; display: flex; align-items: center; gap: 6px; }
-.btn-google::before { content: 'G'; font-weight: 900; }
 
 /* ============================================================
-   ヒーロー（index.htmlのみ）
+   ヒーロー
    ============================================================ */
 .hero {
   background: linear-gradient(135deg, #222 0%, #444 100%);
@@ -104,9 +100,7 @@ a:hover { text-decoration: underline; }
 
 .hero-catch em { color: var(--primary); font-style: normal; }
 
-.hero-sub { font-size: 14px; opacity: .8; margin-bottom: 24px; }
-
-.hero-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.hero-sub { font-size: 14px; opacity: .8; }
 
 /* ============================================================
    コンテンツエリア
@@ -162,22 +156,6 @@ select:focus { outline: 2px solid var(--primary); border-color: transparent; }
 
 .result-count { font-size: 14px; color: var(--muted); }
 .result-count strong { color: var(--text); font-size: 18px; }
-
-/* ============================================================
-   無料プラン制限メッセージ
-   ============================================================ */
-.free-limit-msg {
-  background: #FFF3E0;
-  border: 1px solid #FFB74D;
-  border-radius: var(--radius);
-  padding: 12px 16px;
-  margin: 12px 0;
-  font-size: 14px;
-  display: none;
-}
-
-.free-limit-msg strong { color: #E65100; }
-.free-limit-msg a { color: var(--primary); font-weight: 700; }
 
 /* ============================================================
    企業カード
@@ -293,91 +271,40 @@ select:focus { outline: 2px solid var(--primary); border-color: transparent; }
 .page-btn:disabled { opacity: .4; cursor: default; }
 
 /* ============================================================
-   プランバッジ
+   広告スロット
    ============================================================ */
-.plan-badge {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 20px;
+.ad-slot {
+  margin: 16px 0;
+  text-align: center;
+  overflow: hidden;
 }
 
-.plan-free    { background: #EEE; color: #555; }
-.plan-early   { background: #E8F5E9; color: #388E3C; }
-.plan-monthly { background: #E3F2FD; color: #1565C0; }
-.plan-yearly  { background: #F3E5F5; color: #7B1FA2; }
+.ad-leaderboard {
+  min-height: 90px;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 0;
+}
+
+.ad-rectangle {
+  padding: 12px 0;
+  min-height: 250px;
+}
+
+.ad-before-footer {
+  margin-top: 0;
+  border-bottom: none;
+}
 
 /* ============================================================
-   料金ページ（pricing.html）
+   FAQ
    ============================================================ */
-.pricing-hero {
-  background: linear-gradient(135deg, #222 0%, #444 100%);
-  color: #fff;
-  padding: 40px 16px;
-  text-align: center;
-}
-
-.pricing-hero h1 { font-size: 24px; font-weight: 900; margin-bottom: 8px; }
-.pricing-hero p  { opacity: .8; font-size: 14px; }
-
-.pricing-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
-  padding: 24px 0;
-}
-
-.pricing-card {
-  background: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 24px;
-  text-align: center;
-  position: relative;
-  border: 2px solid transparent;
-  transition: border-color .15s, box-shadow .15s;
-}
-
-.pricing-card:hover { border-color: var(--primary); box-shadow: 0 4px 20px rgba(232,64,64,.15); }
-.pricing-card.featured { border-color: var(--primary); }
-
-.pricing-badge {
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--primary);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 3px 12px;
-  border-radius: 20px;
-  white-space: nowrap;
-}
-
-.pricing-plan-name { font-size: 14px; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
-.pricing-price { font-size: 36px; font-weight: 900; color: var(--text); }
-.pricing-price sub { font-size: 14px; font-weight: 400; color: var(--muted); }
-.pricing-period { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
-
-.pricing-features {
-  list-style: none;
-  margin-bottom: 24px;
-  text-align: left;
-}
-
-.pricing-features li {
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.pricing-features li::before { content: '✓'; color: var(--primary); font-weight: 700; }
-.pricing-features li.no::before { content: '✗'; color: var(--border); }
-.pricing-features li.no { color: var(--muted); }
+.faq { padding: 32px 0 48px; }
+.faq h2 { font-size: 20px; font-weight: 900; margin-bottom: 16px; }
+.faq-item { border-top: 1px solid var(--border); padding: 16px 0; }
+.faq-q { font-weight: 700; margin-bottom: 6px; }
+.faq-a { font-size: 14px; color: var(--muted); line-height: 1.8; }
 
 /* ============================================================
    フッター
@@ -393,29 +320,6 @@ select:focus { outline: 2px solid var(--primary); border-color: transparent; }
 .footer a { color: #aaa; }
 .footer a:hover { color: #fff; }
 .footer-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }
-
-/* ============================================================
-   広告エリア（無料ユーザー向け）
-   ============================================================ */
-.ad-banner {
-  background: #f5f5f5;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  text-align: center;
-  font-size: 12px;
-  color: var(--muted);
-  margin: 12px 0;
-}
-
-/* ============================================================
-   FAQ
-   ============================================================ */
-.faq { padding: 32px 0 48px; }
-.faq h2 { font-size: 20px; font-weight: 900; margin-bottom: 16px; }
-.faq-item { border-top: 1px solid var(--border); padding: 16px 0; }
-.faq-q { font-weight: 700; margin-bottom: 6px; }
-.faq-a { font-size: 14px; color: var(--muted); line-height: 1.8; }
 
 /* ============================================================
    レスポンシブ（タブレット以上）
