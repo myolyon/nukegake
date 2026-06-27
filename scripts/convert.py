@@ -6,8 +6,6 @@ nukegake データ変換スクリプト
 Usage:
   python scripts/convert.py --input ~/Downloads/27_osaka.csv --city sakai
   python scripts/convert.py --input data.csv --city osaka
-  python scripts/convert.py --input data.csv --city kobe
-  python scripts/convert.py --input data.csv --city kyoto
 """
 
 import argparse
@@ -53,8 +51,44 @@ CITY_CONFIGS: dict = {
 }
 
 # ============================================================
+# 法人番号CSV 全件ダウンロード形式のヘッダー（ヘッダー行なし）
+# 列順は NTA 仕様書に準拠
+# ============================================================
+NTA_FULL_HEADERS = [
+    '連番',                   # [0]
+    '法人番号',               # [1]
+    '処理区分',               # [2]
+    '訂正区分',               # [3]
+    '更新年月日',             # [4]
+    '変更年月日',             # [5]
+    '商号又は名称',           # [6]
+    '商号又は名称イメージID', # [7]
+    '種別',                   # [8]
+    '都道府県名',             # [9]
+    '市区町村名',             # [10]
+    '丁目番地等',             # [11]
+    '国内所在地イメージID',   # [12]
+    '都道府県コード',         # [13]
+    '市区町村コード',         # [14]
+    '郵便番号',               # [15]
+    '国外所在地',             # [16]
+    '国外所在地イメージID',   # [17]
+    '国外所在地英語',         # [18]
+    '廃業等事由',             # [19]
+    '廃業等年月日',           # [20]
+    '承継先法人番号',         # [21]
+    '指定年月日',             # [22]
+    '最新履歴',               # [23] ← 1=最新のみ対象
+    '英語表記',               # [24]
+    '英語都道府県名',         # [25]
+    '英語市区町村名',         # [26]
+    '英語丁目番地等',         # [27]
+    'ふりがな',               # [28]
+    '検索対象除外',           # [29] ← 1=除外
+]
+
+# ============================================================
 # 業種キーワード（会社名から機械的に分類）
-# 法人番号データには業種情報がないため名称マッチで推定する
 # ============================================================
 INDUSTRY_KEYWORDS: dict = {
     '製造業': [
@@ -89,11 +123,10 @@ def classify_industry(name: str) -> Optional[str]:
 # 電話番号正規化
 # ============================================================
 def normalize_phone(raw: str) -> Optional[str]:
-    """電話番号を 0XX-XXX-XXXX 形式に整形する"""
     if not raw:
         return None
     digits = re.sub(r'[^\d]', '', raw)
-    if len(digits) == 11:  # 携帯電話
+    if len(digits) == 11:
         return f'{digits[:3]}-{digits[3:7]}-{digits[7:]}'
     elif len(digits) == 10:
         if digits.startswith('0120') or digits.startswith('0800'):
@@ -103,24 +136,24 @@ def normalize_phone(raw: str) -> Optional[str]:
 
 
 # ============================================================
-# CSVカラム候補（異なるCSVソースに対応）
-# 注: 法人番号CSVの会社名カラムは「商号又は名称」
+# CSVカラム候補
 # ============================================================
 COLUMN_ALIASES: dict = {
-    'name':    ['商号又は名称', '法人名', '会社名', 'name', '名称'],
-    'pref':    ['都道府県名', '都道府県', 'prefecture'],
-    'city':    ['市区町村名', '市区町村', 'city'],
-    'address': ['丁目番地等', '番地', '住所', 'address'],
-    'tel':     ['電話番号', 'tel', 'phone', '電話'],
-    'closed_date': ['廃業等年月日'],
+    'name':          ['商号又は名称', '法人名', '会社名', 'name', '名称'],
+    'pref':          ['都道府県名', '都道府県', 'prefecture'],
+    'city':          ['市区町村名', '市区町村', 'city'],
+    'address':       ['丁目番地等', '番地', '住所', 'address'],
+    'tel':           ['電話番号', 'tel', 'phone', '電話'],
+    'closed_date':   ['廃業等年月日'],
     'closed_reason': ['廃業等事由'],
     'process_type':  ['処理区分'],
     'closed_flag':   ['閉鎖フラグ', 'closed'],
+    'latest':        ['最新履歴'],
+    'exclude':       ['検索対象除外'],
 }
 
 
 def find_col(headers: list, key: str) -> Optional[str]:
-    """ヘッダリストから対応カラム名を返す"""
     for alias in COLUMN_ALIASES.get(key, []):
         if alias in headers:
             return alias
@@ -128,11 +161,6 @@ def find_col(headers: list, key: str) -> Optional[str]:
 
 
 def is_closed(row: dict, headers: list) -> bool:
-    """
-    廃業・閉鎖法人の判定
-    法人番号CSV: 廃業等年月日が設定されているか、処理区分が12(廃業)
-    旧形式: 閉鎖フラグ=1
-    """
     col_date   = find_col(headers, 'closed_date')
     col_reason = find_col(headers, 'closed_reason')
     col_proc   = find_col(headers, 'process_type')
@@ -163,6 +191,14 @@ def detect_encoding(path: str) -> str:
     return 'utf-8'
 
 
+def has_header(path: str, encoding: str) -> bool:
+    """最初の行がヘッダー行かデータ行かを判定する"""
+    with open(path, encoding=encoding, newline='') as f:
+        reader = csv.reader(f)
+        first = next(reader, [])
+    return bool(first) and not first[0].strip().lstrip('"').isdigit()
+
+
 # ============================================================
 # メイン処理
 # ============================================================
@@ -174,64 +210,75 @@ def process_csv(input_path: str, city_id: str) -> list:
     encoding = detect_encoding(input_path)
     print(f'エンコーディング: {encoding}')
 
+    header_exists = has_header(input_path, encoding)
+    fieldnames = None if header_exists else NTA_FULL_HEADERS
+    print(f'ヘッダー行: {"あり" if header_exists else "なし（NTA全件形式と判定）"}')
+
     companies = []
     seen = set()
     company_id = 1
-    skipped_city = skipped_industry = skipped_dup = skipped_empty = skipped_closed = 0
+    skipped_city = skipped_industry = skipped_dup = skipped_empty = 0
+    skipped_closed = skipped_old = skipped_exclude = 0
 
     with open(input_path, encoding=encoding, newline='') as f:
-        reader = csv.DictReader(f)
-        headers = list(reader.fieldnames or [])
+        reader = csv.DictReader(f, fieldnames=fieldnames)
+        headers = NTA_FULL_HEADERS if fieldnames else list(reader.fieldnames or [])
 
         col_name    = find_col(headers, 'name')
         col_pref    = find_col(headers, 'pref')
         col_city    = find_col(headers, 'city')
         col_address = find_col(headers, 'address')
         col_tel     = find_col(headers, 'tel')
+        col_latest  = find_col(headers, 'latest')
+        col_exclude = find_col(headers, 'exclude')
 
         if not col_name:
-            print(f'ERROR: 会社名カラムが見つかりません。\nヘッダー: {headers}', file=sys.stderr)
+            print(f'ERROR: 会社名カラムが見つかりません。\nヘッダー: {headers[:10]}', file=sys.stderr)
             sys.exit(1)
 
-        print(f'カラムマッピング: 名称={col_name}, 都道府県={col_pref}, 市区町村={col_city}, 住所={col_address}, 電話={col_tel}')
+        print(f'カラム: 名称={col_name}, 都道府県={col_pref}, 市区町村={col_city}')
 
         for row in reader:
-            # 廃業・閉鎖法人を除外
+            # 最新履歴=1 のみ対象（重複履歴を除外）
+            if col_latest and row.get(col_latest, '1').strip() != '1':
+                skipped_old += 1
+                continue
+
+            # 検索対象除外=1 をスキップ
+            if col_exclude and row.get(col_exclude, '0').strip() == '1':
+                skipped_exclude += 1
+                continue
+
+            # 廃業法人を除外
             if is_closed(row, headers):
                 skipped_closed += 1
                 continue
 
-            # 名称の空データ除去
             name = (row.get(col_name) or '').strip()
             if not name:
                 skipped_empty += 1
                 continue
 
-            # 都市フィルター
             city_val = (row.get(col_city) or '').strip() if col_city else ''
             if col_city and city_keyword not in city_val:
                 skipped_city += 1
                 continue
 
-            # 業種分類（キーワードマッチ）
             industry = classify_industry(name)
             if industry not in target_industries:
                 skipped_industry += 1
                 continue
 
-            # 重複除去（名称+市区町村の組合せ）
             dedup_key = name + city_val
             if dedup_key in seen:
                 skipped_dup += 1
                 continue
             seen.add(dedup_key)
 
-            # 住所組み立て
             pref_val    = (row.get(col_pref) or '').strip() if col_pref else ''
             addr_detail = (row.get(col_address) or '').strip() if col_address else ''
             address = pref_val + city_val + addr_detail
 
-            # 電話番号
             raw_tel = (row.get(col_tel) or '').strip() if col_tel else ''
             tel = normalize_phone(raw_tel)
 
@@ -246,11 +293,13 @@ def process_csv(input_path: str, city_id: str) -> list:
             })
             company_id += 1
 
-    print(f'  廃業除外: {skipped_closed}')
-    print(f'  都市除外: {skipped_city}')
-    print(f'  業種除外: {skipped_industry}')
-    print(f'  重複除外: {skipped_dup}')
-    print(f'  空データ除外: {skipped_empty}')
+    print(f'  旧履歴除外: {skipped_old}')
+    print(f'  検索除外:   {skipped_exclude}')
+    print(f'  廃業除外:   {skipped_closed}')
+    print(f'  都市除外:   {skipped_city}')
+    print(f'  業種除外:   {skipped_industry}')
+    print(f'  重複除外:   {skipped_dup}')
+    print(f'  空データ:   {skipped_empty}')
     return companies
 
 
@@ -275,26 +324,13 @@ def print_summary(companies: list) -> None:
     print(f'  電話番号あり: {tel_count} 件 / なし: {no_tel} 件')
     print()
     print('⚠️  法人番号CSVには電話番号が含まれていません。')
-    print('   電話番号は別途iタウンページ等のデータと突合が必要です。')
+    print('   全件 isTelAvailable:false になります。')
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description='法人番号CSVからnukegake用JSONを生成',
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog='''
-例:
-  python scripts/convert.py --input ~/Downloads/27_osaka.csv --city sakai
-  python scripts/convert.py --input ~/Downloads/28_hyogo.csv --city kobe
-
-入力CSVダウンロード先:
-  https://www.houjin-bangou.nta.go.jp/download/todofuken/
-  → 当該都道府県を選択してダウンロード
-        '''
-    )
+    parser = argparse.ArgumentParser(description='法人番号CSVからnukegake用JSONを生成')
     parser.add_argument('--input', required=True, help='入力CSVファイルパス')
-    parser.add_argument('--city',  required=True, choices=list(CITY_CONFIGS.keys()),
-                        help=f'都市ID: {" / ".join(CITY_CONFIGS.keys())}')
+    parser.add_argument('--city',  required=True, choices=list(CITY_CONFIGS.keys()))
     args = parser.parse_args()
 
     if not os.path.exists(args.input):
