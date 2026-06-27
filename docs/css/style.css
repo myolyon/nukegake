@@ -5,8 +5,8 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --primary:   #E84040;
-  --primary-d: #C02020;
+  --primary:   #D94035;
+  --primary-d: #B52A20;
   --bg:        #F7F7F7;
   --white:     #FFFFFF;
   --text:      #222222;
@@ -407,6 +407,15 @@ select:focus { outline: 2px solid var(--primary); border-color: transparent; }
   color: var(--muted);
   margin: 12px 0;
 }
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+.faq { padding: 32px 0 48px; }
+.faq h2 { font-size: 20px; font-weight: 900; margin-bottom: 16px; }
+.faq-item { border-top: 1px solid var(--border); padding: 16px 0; }
+.faq-q { font-weight: 700; margin-bottom: 6px; }
+.faq-a { font-size: 14px; color: var(--muted); line-height: 1.8; }
 
 /* ============================================================
    レスポンシブ（タブレット以上）
