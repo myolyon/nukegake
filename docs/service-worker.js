@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nukegake-v1';
+const CACHE_NAME = 'nukegake-v4';
 const CACHE_URLS = [
   './',
   './style.css',
