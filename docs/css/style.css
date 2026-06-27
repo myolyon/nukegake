@@ -5,8 +5,8 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --primary:   #E84040;
-  --primary-d: #C02020;
+  --primary:   #D94035;
+  --primary-d: #B52A20;
   --bg:        #F7F7F7;
   --white:     #FFFFFF;
   --text:      #222222;
