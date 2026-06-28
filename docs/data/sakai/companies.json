@@ -40,8 +40,8 @@
     "name": "株式会社アイ建設",
     "industry": "建設業",
     "address": "大阪府堺市東区白鷺町１丁５番１号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-250-7898",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -94,8 +94,8 @@
     "name": "株式会社荒木建設",
     "industry": "建設業",
     "address": "大阪府堺市堺区高砂町１丁１２番地",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-245-8338",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -103,8 +103,8 @@
     "name": "栄光ハウス株式会社",
     "industry": "建設業",
     "address": "大阪府堺市堺区寺地町東３丁１番２３号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-232-8735",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -175,8 +175,8 @@
     "name": "株式会社フジ工務店",
     "industry": "建設業",
     "address": "大阪府堺市堺区戎之町東５丁５番１５号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-223-1133",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -184,8 +184,8 @@
     "name": "大仲建設株式会社",
     "industry": "建設業",
     "address": "大阪府堺市堺区住吉橋町２丁３番２号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-221-5666",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -193,8 +193,8 @@
     "name": "大彦建設株式会社",
     "industry": "建設業",
     "address": "大阪府堺市中区毛穴町３２８番地",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-272-1432",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -229,8 +229,8 @@
     "name": "笠松建設株式会社",
     "industry": "建設業",
     "address": "大阪府堺市堺区北田出井町１丁６番１０号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-232-6522",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -238,8 +238,8 @@
     "name": "株式会社金子組",
     "industry": "建設業",
     "address": "大阪府堺市北区百舌鳥梅北町３丁１２５番地１７０",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-250-5060",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -247,8 +247,8 @@
     "name": "株式会社河村工務店",
     "industry": "建設業",
     "address": "大阪府堺市北区金岡町２３０３番地",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-252-0214",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -265,8 +265,8 @@
     "name": "株式会社銀座住建",
     "industry": "建設業",
     "address": "大阪府堺市堺区向陵中町２丁１番１１号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-259-9600",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -283,8 +283,8 @@
     "name": "株式会社国正建設",
     "industry": "建設業",
     "address": "大阪府堺市中区楢葉１０１番地",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-234-6961",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -328,8 +328,8 @@
     "name": "株式会社堺工務店",
     "industry": "建設業",
     "address": "大阪府堺市南区三原台４丁７番１４号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-297-5000",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -382,8 +382,8 @@
     "name": "新誠建設株式会社",
     "industry": "建設業",
     "address": "大阪府堺市堺区山本町５丁１０１番２５",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-227-7416",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -427,8 +427,8 @@
     "name": "合同建設株式会社",
     "industry": "建設業",
     "address": "大阪府堺市中区東山３９３番地の１",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-235-1133",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -454,8 +454,8 @@
     "name": "菅野建設株式会社",
     "industry": "建設業",
     "address": "大阪府堺市中区八田西町２丁６番２１号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-270-0691",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -463,8 +463,8 @@
     "name": "株式会社大重組",
     "industry": "建設業",
     "address": "大阪府堺市東区日置荘北町３丁９番２５号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-285-3897",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -544,8 +544,8 @@
     "name": "株式会社但馬ハウス",
     "industry": "建設業",
     "address": "大阪府堺市北区新金岡町４丁７番７８号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-251-0661",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -553,8 +553,8 @@
     "name": "大和不動建設株式会社",
     "industry": "建設業",
     "address": "大阪府堺市中区深井清水町３７５５番地",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-277-9100",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -643,8 +643,8 @@
     "name": "株式会社西上建設",
     "industry": "建設業",
     "address": "大阪府堺市南区檜尾４７１番地の１",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-297-0717",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -715,8 +715,8 @@
     "name": "株式会社東尾工務店",
     "industry": "建設業",
     "address": "大阪府堺市中区深井水池町２８５８番地２",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-278-3613",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -778,8 +778,8 @@
     "name": "不二工営建設株式会社",
     "industry": "建設業",
     "address": "大阪府堺市中区土塔町３０７４番地",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-236-7998",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -805,8 +805,8 @@
     "name": "二豊重機建設株式会社",
     "industry": "建設業",
     "address": "大阪府堺市堺区三宝町４丁２３２番地の５０",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-229-2770",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -859,8 +859,8 @@
     "name": "株式会社三石組",
     "industry": "建設業",
     "address": "大阪府堺市堺区築港南町１番地１番",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-221-4080",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -877,8 +877,8 @@
     "name": "株式会社マルマサ阪南建設メンテナンス",
     "industry": "建設業",
     "address": "大阪府堺市南区竹城台３丁２２番３号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-292-1406",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -994,8 +994,8 @@
     "name": "株式会社吉村工務店",
     "industry": "建設業",
     "address": "大阪府堺市東区日置荘西町２丁２８番１０号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-287-3012",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1084,8 +1084,8 @@
     "name": "桂建設株式会社",
     "industry": "建設業",
     "address": "大阪府堺市北区百舌鳥梅町１丁５番地６",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-255-3123",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1156,8 +1156,8 @@
     "name": "株式会社浜崎板金工作所",
     "industry": "建設業",
     "address": "大阪府堺市美原区阿弥１番地の４",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-361-4822",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1228,8 +1228,8 @@
     "name": "株式会社住宅情報サービス",
     "industry": "建設業",
     "address": "大阪府堺市堺区宿院町東１丁１番２０号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-233-5868",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1255,8 +1255,8 @@
     "name": "株式会社澄川組",
     "industry": "建設業",
     "address": "大阪府堺市中区伏尾３番地",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-277-6865",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1282,8 +1282,8 @@
     "name": "株式会社植靖造園土木",
     "industry": "建設業",
     "address": "大阪府堺市西区浜寺船尾町西３丁６９番地",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-264-7614",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1300,8 +1300,8 @@
     "name": "株式会社創実建工",
     "industry": "建設業",
     "address": "大阪府堺市東区日置荘西町３丁９番１６号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-286-5931",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1309,8 +1309,8 @@
     "name": "美杉建設興業株式会社",
     "industry": "建設業",
     "address": "大阪府堺市東区草尾５３８番地９",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-237-6894",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1327,8 +1327,8 @@
     "name": "祐世建設株式会社",
     "industry": "建設業",
     "address": "大阪府堺市堺区南向陽町１丁４番１号（１０２号）",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-256-4571",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1354,8 +1354,8 @@
     "name": "株式会社立上建設",
     "industry": "建設業",
     "address": "大阪府堺市堺区香ヶ丘町３丁７番１号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-227-1470",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1363,8 +1363,8 @@
     "name": "山田建築設備株式会社",
     "industry": "建設業",
     "address": "大阪府堺市西区浜寺石津町中５丁２－８",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-242-7006",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1453,8 +1453,8 @@
     "name": "株式会社山田塗装",
     "industry": "建設業",
     "address": "大阪府堺市東区丈六１１５番地９",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-236-2646",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1489,8 +1489,8 @@
     "name": "英大住建株式会社",
     "industry": "建設業",
     "address": "大阪府堺市美原区多治井２１番１号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-323-8201",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1516,8 +1516,8 @@
     "name": "株式会社中本建設",
     "industry": "建設業",
     "address": "大阪府堺市中区八田北町９７０番地５",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-270-1002",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1552,8 +1552,8 @@
     "name": "株式会社増山工務店",
     "industry": "建設業",
     "address": "大阪府堺市南区泉田中２４３１番地１６",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-283-9308",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1570,8 +1570,8 @@
     "name": "徳田工務店株式会社",
     "industry": "建設業",
     "address": "大阪府堺市北区八下北３番２５号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-259-1435",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1579,8 +1579,8 @@
     "name": "庄崎塗装株式会社",
     "industry": "建設業",
     "address": "大阪府堺市西区鳳北町７丁１２８番地",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-220-0824",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1597,8 +1597,8 @@
     "name": "株式会社ライトハウス",
     "industry": "建設業",
     "address": "大阪府堺市北区常磐町３丁２０番地１０",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "0120-220-036",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1606,8 +1606,8 @@
     "name": "株式会社上村工務店",
     "industry": "建設業",
     "address": "大阪府堺市中区福田１３８２番地１",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-237-8859",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1624,8 +1624,8 @@
     "name": "株式会社あきよし左官",
     "industry": "建設業",
     "address": "大阪府堺市中区東山１７６番地２３",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-239-5111",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1633,8 +1633,8 @@
     "name": "株式会社岡本隆建築設計",
     "industry": "建設業",
     "address": "大阪府堺市南区若松台３丁３１番６号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-293-7583",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1660,8 +1660,8 @@
     "name": "乾工務店株式会社",
     "industry": "建設業",
     "address": "大阪府堺市南区槇塚台２丁１２番７号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-283-9358",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1678,8 +1678,8 @@
     "name": "株式会社大輝工務店",
     "industry": "建設業",
     "address": "大阪府堺市西区鳳北町７丁１３８番地",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-246-9071",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1687,8 +1687,8 @@
     "name": "みらい総合建築株式会社",
     "industry": "建設業",
     "address": "大阪府堺市東区白鷺町２丁９番４号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "0120-320-613",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1723,8 +1723,8 @@
     "name": "株式会社森本工務店",
     "industry": "建設業",
     "address": "大阪府堺市中区堀上町５０２番地",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-279-8630",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1822,8 +1822,8 @@
     "name": "有限会社植田塗装",
     "industry": "建設業",
     "address": "大阪府堺市東区大美野１５８番地の５２",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-235-9656",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1939,8 +1939,8 @@
     "name": "有限会社煌槓土木",
     "industry": "建設業",
     "address": "大阪府堺市北区金岡町２３８３番地の３７",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-259-3931",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -2083,8 +2083,8 @@
     "name": "有限会社大創住建",
     "industry": "建設業",
     "address": "大阪府堺市堺区今池町２丁７番１２号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-229-1696",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -2173,8 +2173,8 @@
     "name": "有限会社中百舌鳥住建",
     "industry": "建設業",
     "address": "大阪府堺市北区百舌鳥陵南町２丁６２６番地",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-270-3555",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -2281,8 +2281,8 @@
     "name": "有限会社ヒロモト工務店",
     "industry": "建設業",
     "address": "大阪府堺市東区日置荘原寺町１９番地",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-288-1113",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -2344,8 +2344,8 @@
     "name": "有限会社吉見塗装",
     "industry": "建設業",
     "address": "大阪府堺市中区深井東町３１２４番地",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-279-1154",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
