@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://nukegake.jp/sitemap.xml

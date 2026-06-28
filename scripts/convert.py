@@ -310,6 +310,21 @@ def save_json(companies: list, output_path: str) -> None:
     print(f'\n✅ {len(companies)} 件を {output_path} に出力しました')
 
 
+def save_split(companies: list, output_path: str) -> None:
+    """業種別JSONファイルを出力する（companies.json と同ディレクトリ）"""
+    base_dir = os.path.dirname(output_path)
+    by_industry: dict = {}
+    for c in companies:
+        by_industry.setdefault(c['industry'], []).append(c)
+
+    for industry, items in by_industry.items():
+        # ファイル名は業種名をそのまま使用（例: 製造業.json）
+        fname = os.path.join(base_dir, f'{industry}.json')
+        with open(fname, 'w', encoding='utf-8') as f:
+            json.dump(items, f, ensure_ascii=False, indent=2)
+        print(f'  {industry}: {len(items)} 件 → {fname}')
+
+
 def print_summary(companies: list) -> None:
     by_industry: dict = {}
     no_tel = 0
@@ -331,6 +346,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description='法人番号CSVからnukegake用JSONを生成')
     parser.add_argument('--input', required=True, help='入力CSVファイルパス')
     parser.add_argument('--city',  required=True, choices=list(CITY_CONFIGS.keys()))
+    parser.add_argument('--split', action='store_true',
+                        help='業種別JSONファイルも出力する（製造業.json 等）')
     args = parser.parse_args()
 
     if not os.path.exists(args.input):
@@ -342,6 +359,11 @@ def main() -> None:
 
     output_path = CITY_CONFIGS[args.city]['output_path']
     save_json(companies, output_path)
+
+    if args.split:
+        print('\n--- 業種別ファイル出力 ---')
+        save_split(companies, output_path)
+
     print_summary(companies)
 
 
