@@ -5,3 +5,5 @@ scripts/.env.stripe
 *.env.local
 node_modules/
 .DS_Store
+__pycache__/
+*.pyc
