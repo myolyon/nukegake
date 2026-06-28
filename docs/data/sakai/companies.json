@@ -67,8 +67,8 @@
     "name": "株式会社イズサ電機工業所",
     "industry": "製造業",
     "address": "大阪府堺市堺区旭ヶ丘南町１丁１番２９号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-245-5663",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -760,8 +760,8 @@
     "name": "株式会社林工業",
     "industry": "製造業",
     "address": "大阪府堺市西区浜寺石津町中４丁１１番１６号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-245-1612",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -958,8 +958,8 @@
     "name": "山田鉄工株式会社",
     "industry": "製造業",
     "address": "大阪府堺市西区原田１０３番地１",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-273-1505",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1102,8 +1102,8 @@
     "name": "近畿コーティング工業株式会社",
     "industry": "製造業",
     "address": "大阪府堺市美原区北余部３４６番地",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-362-1761",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
@@ -1201,8 +1201,8 @@
     "name": "株式会社田頭工業",
     "industry": "製造業",
     "address": "大阪府堺市堺区今池町２丁３番１１号",
-    "tel": "",
-    "isTelAvailable": false,
+    "tel": "072-238-8674",
+    "isTelAvailable": true,
     "city": "sakai"
   },
   {
