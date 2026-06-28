@@ -28,17 +28,17 @@ if [ -z "$CSV_PATH" ]; then
     \( -name "27_*.csv" -o -name "*osaka*.csv" -o -name "*大阪*.csv" \) \
     2>/dev/null | sort -t_ -k1 | tail -1)
 
-  # 2. 上記がなければZIP解冰を試みる
+  # 2. 上記がなければZIP解凍を試みる
   if [ -z "$CSV_PATH" ]; then
     ZIP=$(find ~/Downloads -maxdepth 2 \
       \( -name "27_*.zip" -o -name "*osaka*.zip" \) \
       2>/dev/null | sort | tail -1)
     if [ -n "$ZIP" ]; then
-      echo "📦 ZIP解冰中: $ZIP"
+      echo "📦 ZIP解凍中: $ZIP"
       UNZIP_DIR=$(mktemp -d)
       unzip -q "$ZIP" -d "$UNZIP_DIR"
       CSV_PATH=$(find "$UNZIP_DIR" -name "*.csv" | head -1)
-      echo "   解冰先: $CSV_PATH"
+      echo "   解凍先: $CSV_PATH"
     fi
   fi
 
@@ -90,3 +90,9 @@ git push origin main
 echo ""
 echo "✅ 完了: ${COUNT}件を ${OUTPUT_JSON} にデプロイしました"
 echo "   🌐 https://nukegake.jp"
+echo ""
+echo "--- 次のステップ ---"
+echo "  電話番号収集用CSVを出力する場合:"
+echo "    python scripts/export_missing_tel.py --city $CITY --industry 製造業 --limit 100 --output data_collection/${CITY}_製造業.csv"
+echo "  収集後にマージ:"
+echo "    python scripts/merge_tel.py --input data_collection/${CITY}_製造業.csv --city $CITY --has-header"
