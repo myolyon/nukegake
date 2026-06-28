@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>電話番号収集タスク — nukegake</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 24px 16px 64px;
+      color: #1F2937;
+      background: #fff;
+    }
+    h1 { font-size: 20px; font-weight: 800; color: #D94035; margin-bottom: 4px; }
+    .sub { font-size: 13px; color: #6B7280; margin-bottom: 32px; }
+    h2 { font-size: 15px; font-weight: 700; margin: 28px 0 10px; border-left: 3px solid #D94035; padding-left: 10px; }
+    p, li { font-size: 14px; line-height: 1.8; color: #374151; }
+    ul, ol { padding-left: 20px; }
+    li { margin-bottom: 4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+    th { background: #F3F4F6; text-align: left; padding: 8px 10px; font-weight: 600; }
+    td { padding: 8px 10px; border-top: 1px solid #E5E7EB; }
+    td:first-child { font-family: monospace; font-size: 12px; color: #6B7280; }
+    .highlight { background: #FEF2F2; border: 1px solid #FECACA; border-radius: 6px; padding: 10px 14px; margin-top: 8px; font-size: 14px; }
+    .rule { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 6px; padding: 10px 14px; margin-top: 8px; }
+    .rule li { color: #374151; }
+    .rule li strong { color: #D94035; }
+    .copy-btn {
+      display: inline-block;
+      margin-top: 24px;
+      background: #D94035;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .copy-btn:active { background: #B52A20; }
+    #prompt-text {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>電話番号収集タスク</h1>
+  <p class="sub">nukegake データ整備 / AI向け指示書</p>
+
+  <h2>役割</h2>
+  <p>添付CSVの <strong>tel 列</strong> を電話番号で埋めてください。</p>
+
+  <h2>CSVの列</h2>
+  <table>
+    <tr><th>列名</th><th>内容</th></tr>
+    <tr><td>company_name</td><td>会社名</td></tr>
+    <tr><td>industry</td><td>業種</td></tr>
+    <tr><td>address</td><td>住所</td></tr>
+    <tr><td>search_url</td><td>Google検索URL（そのまま開ける）</td></tr>
+    <tr><td>map_url</td><td>Googleマップ URL</td></tr>
+    <tr><td>tel</td><td>← <strong>ここに電話番号を入力する</strong></td></tr>
+  </table>
+
+  <h2>調査手順</h2>
+  <ol>
+    <li><code>search_url</code> を開く</li>
+    <li>公式サイトの「会社概要」「お問い合わせ」ページを確認する</li>
+    <li>電話番号が見つかれば <code>tel</code> 列に入力する</li>
+    <li>見つからなければ空欄のまま</li>
+  </ol>
+
+  <h2>ルール</h2>
+  <div class="rule">
+    <ul>
+      <li>形式は自由（<code>072-123-4567</code> でも <code>0721234567</code> でも可）</li>
+      <li>代表番号のみ（FAX・携帯不要）</li>
+      <li>見つからない場合は空欄のまま</li>
+      <li><strong>推測・創作は絶対にしない</strong></li>
+    </ul>
+  </div>
+
+  <h2>出力</h2>
+  <p>元のCSVと同じ形式で <strong>tel 列だけ埋めて</strong> 返してください。列の追加・削除・並び替えは不要です。</p>
+
+  <button class="copy-btn" onclick="copyPrompt()">指示文をコピー</button>
+
+  <pre id="prompt-text">
+# 電話番号収集タスク
+
+## 役割
+添付CSVのtel列を電話番号で埋めてください。
+
+## CSVの列
+- company_name: 会社名
+- industry: 業種
+- address: 住所
+- search_url: Google検索URL（そのまま開ける）
+- map_url: GoogleマップURL
+- tel: ← ここに電話番号を入力する
+
+## 調査手順
+1. search_urlを開く
+2. 公式サイトの「会社概要」「お問い合わせ」ページを確認する
+3. 電話番号が見つかればtel列に入力する
+4. 見つからなければ空欄のまま
+
+## ルール
+- 形式は自由（072-123-4567でも0721234567でも可）
+- 代表番号のみ（FAX・携帯不要）
+- 見つからない場合は空欄のまま
+- 推測・創作は絶対にしない
+
+## 出力
+元のCSVと同じ形式でtel列だけ埋めて返してください。列の追加・削除・並び替えは不要です。
+  </pre>
+
+  <script>
+    function copyPrompt() {
+      const text = document.getElementById('prompt-text').textContent.trim();
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = 'コピーしました ✓';
+        setTimeout(() => { btn.textContent = '指示文をコピー'; }, 2000);
+      });
+    }
+  </script>
+
+</body>
+</html>
