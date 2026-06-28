@@ -218,14 +218,27 @@ body {
   transition: background 0.15s;
 }
 .btn-tel:hover { background: var(--primary-d); }
-.no-tel-label {
-  font-size: 10px;
-  color: var(--muted);
-  text-align: center;
-  line-height: 1.4;
-  width: 48px;
+.no-tel-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
   flex-shrink: 0;
+  align-items: center;
 }
+.btn-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 20px;
+  border-radius: 4px;
+  font-size: 13px;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  transition: background 0.15s;
+}
+.btn-action:hover { background: var(--border); }
 .btn-fav {
   background: none;
   border: none;

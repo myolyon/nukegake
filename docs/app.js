@@ -179,7 +179,12 @@ function createCardHtml(c) {
   if (c.isTelAvailable !== false && c.tel) {
     telBtn = `<a href="tel:${esc(c.tel)}" class="btn-tel" data-id="${c.id}" aria-label="電話する">📞</a>`;
   } else {
-    telBtn = `<span class="no-tel-label">電話番号<br>未登録</span>`;
+    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(c.name)}`;
+    const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(c.address || c.name)}`;
+    telBtn = `<div class="no-tel-actions">
+      <a href="${searchUrl}" class="btn-action btn-web" target="_blank" rel="noopener noreferrer" aria-label="Web検索">🔍</a>
+      <a href="${mapUrl}" class="btn-action btn-map" target="_blank" rel="noopener noreferrer" aria-label="地図を開く">📍</a>
+    </div>`;
   }
 
   return `
